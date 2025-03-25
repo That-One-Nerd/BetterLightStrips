@@ -18,6 +18,16 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void robotInit() {
+    System.out.println("bruh come on dude");
+    LightSchedulerConfig config = LightScheduler.configure();
+    config.logLevel = 0;
+
+    LightScheduler.withStrip(new LightStripProperties(0, 25));
+    LightScheduler.start();
+  }
+
+  @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
   }
