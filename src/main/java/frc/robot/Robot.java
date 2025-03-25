@@ -5,9 +5,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import net.betterlights.LightScheduler;
+import net.betterlights.patterns.SolidLightPattern;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -22,10 +24,20 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     LightScheduler.configure()
       .withLogLevel(0)
-      .withNamedLightSegment("demo1", 0, 0, 9)
-      .withNamedLightSegment("demo2", 0, 10, 19);
+      .withNamedLightSegment("demo1", 0, 0, 4)
+      .withNamedLightSegment("demo2", 0, 5, 19)
+      .withStateAll(DemoState.State1, 10, new SolidLightPattern(Color.kRed))
+      .withStateAll(DemoState.State2, 10, new SolidLightPattern(Color.kGreen))
+      .withStateAll(DemoState.State3, 10, new SolidLightPattern(Color.kBlue));
 
     LightScheduler.start();
+  }
+
+  private static enum DemoState
+  {
+    State1,
+    State2,
+    State3
   }
 
   @Override

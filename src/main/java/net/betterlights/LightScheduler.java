@@ -1,5 +1,8 @@
 package net.betterlights;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -9,9 +12,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class LightScheduler extends Command
 {
