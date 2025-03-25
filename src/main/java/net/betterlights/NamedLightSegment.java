@@ -1,4 +1,4 @@
-package frc.robot;
+package net.betterlights;
 
 /** Represents a segment of lights, determined by its port number and start and end indices. */
 public class NamedLightSegment

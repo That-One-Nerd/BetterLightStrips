@@ -1,4 +1,4 @@
-package frc.robot;
+package net.betterlights;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;

@@ -1,10 +1,11 @@
-package frc.robot;
+package net.betterlights;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -22,11 +23,17 @@ public class LightScheduler extends Command
     /** Refreshes the light scheduler. Required if adding strips or configuring the scheduler while already begun. */
     public static void refresh() { kInstance.refreshStrips(); }
 
-    /** Schedules the light management command. */
+    /** Starts the light scheduler. */
     public static void start()
     {
         kInstance.log(1, "Starting light scheduler.");
         CommandScheduler.getInstance().schedule(kInstance);
+    }
+
+    /** Stops the light scheduler. */
+    public static void stop()
+    {
+        CommandScheduler.getInstance().cancel(kInstance);
     }
 
     private LightSchedulerConfig config;
@@ -38,6 +45,7 @@ public class LightScheduler extends Command
     private LightScheduler()
     {
         config = LightSchedulerConfig.kDefault;
+        overlapCooldownTimer = new Timer();
     }
 
     private void freeStrips()
@@ -130,6 +138,7 @@ public class LightScheduler extends Command
     @Override
     public void end(boolean interrupted)
     {
+        log(1, "Stopping light scheduler!");
         freeStrips();
     }
 
@@ -138,6 +147,8 @@ public class LightScheduler extends Command
     public void execute()
     {
         // TODO
+        checkOverlap();
+
         index = 0;
         namedSegmentToView.forEach((name, view) ->
         {
@@ -161,9 +172,68 @@ public class LightScheduler extends Command
     @Override
     public boolean runsWhenDisabled() { return true; }
 
+    private Timer overlapCooldownTimer;
+    private void checkOverlap()
+    {
+        // Check if any segment overlaps any other segment.
+        // Ignore if they are on different ports.
+        int segmentCount = config.segments.size();
+        ArrayList<Pair<NamedLightSegment, NamedLightSegment>> overlaps = new ArrayList<>();
+        for (int i = 0; i < segmentCount; i++)
+        {
+            NamedLightSegment segmentA = config.segments.get(i);
+            for (int j = i + 1; j < segmentCount; j++)
+            {
+                NamedLightSegment segmentB = config.segments.get(j);
+                if (segmentA.port != segmentB.port) continue;
+
+                if ((segmentA.startIndex >= segmentB.startIndex && segmentA.startIndex <= segmentB.endIndex) ||
+                    (segmentA.endIndex   >= segmentB.startIndex && segmentA.endIndex   <= segmentB.endIndex) ||
+                    (segmentB.startIndex >= segmentA.startIndex && segmentB.startIndex <= segmentA.endIndex) ||
+                    (segmentB.endIndex   >= segmentA.startIndex && segmentB.endIndex   <= segmentA.endIndex))
+                {
+                    overlaps.add(Pair.of(segmentA, segmentB));
+                }
+            }
+        }
+
+        if (overlaps.size() > 0)
+        {
+            if (!overlapCooldownTimer.isRunning() || overlapCooldownTimer.hasElapsed(1.0))
+            {
+                for (int i = 0; i < overlaps.size(); i++)
+                {
+                    Pair<NamedLightSegment, NamedLightSegment> overlap = overlaps.get(i);
+                    log(2, "Named light segment \"%s\" overlaps segment \"%s\"",
+                        overlap.getFirst().name,
+                        overlap.getSecond().name);
+                }
+                overlapCooldownTimer.restart();
+            }
+        }
+        else
+        {
+            if (overlapCooldownTimer.isRunning())
+            {
+                log(1, "Overlap is no longer occurring.");
+            }
+            overlapCooldownTimer.stop();
+            overlapCooldownTimer.reset();
+        }
+    }
+
     private void log(int level, String message, Object... args)
     {
         if (level < config.logLevel) return;
-        System.out.printf("[LIGHTS] %s\n", String.format(message, args));
+        String prefix;
+        switch (level)
+        {
+            case 0: prefix = "DEBUG"; break;
+            case 1: prefix = "INFO"; break;
+            case 2: prefix = "WARN"; break;
+            case 3: prefix = "ERROR"; break;
+            default: prefix = "???"; break;
+        }
+        System.out.printf("[LIGHTS] %s: %s\n", prefix, String.format(message, args));
     }
 }
