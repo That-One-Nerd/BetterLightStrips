@@ -1,30 +1,23 @@
 package frc.robot;
 
-import java.util.ArrayList;
-
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
+import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class LightScheduler extends Command
 {
-    private static final LightScheduler kInstance = new LightScheduler();
+    public static final LightScheduler kInstance = new LightScheduler();
 
     /** Returns the configuration class for the light scheduler. Use this before calling the start method. */
     public static LightSchedulerConfig configure() { return kInstance.config; }
-
-    /** Adds a light strip to the scheduler. */
-    public static void withStrip(LightStripProperties strip)
-    {
-        kInstance.log(0, "Adding new strip: Port %d, Length %d", strip.port, strip.length);
-        kInstance.stripProperties.add(strip);
-    }
-    /** Adds a collection of light strips to the scheduler. */
-    public static void withStrips(LightStripProperties... strips)
-    {
-        for (int i = 0; i < strips.length; i++) withStrip(strips[i]);
-    }
 
     /** Refreshes the light scheduler. Required if adding strips or configuring the scheduler while already begun. */
     public static void refresh() { kInstance.refreshStrips(); }
@@ -37,67 +30,136 @@ public class LightScheduler extends Command
     }
 
     private LightSchedulerConfig config;
-    private ArrayList<LightStripProperties> stripProperties;
 
     private AddressableLED[] strips;
     private AddressableLEDBuffer[] buffers;
+    private HashMap<String, AddressableLEDBufferView> namedSegmentToView;
 
     private LightScheduler()
     {
         config = LightSchedulerConfig.kDefault;
-        stripProperties = new ArrayList<>();
     }
 
     private void freeStrips()
     {
-        log(0, "Freeing strip data.");
         if (strips != null)
         {
+            log(0, "Freeing strip data due to a refresh or initialization.");
             for (int i = 0; i < strips.length; i++)
             {
                 strips[i].close();
-                log(0, "Strip %d closed.", i);
+                log(0, "Freed strip %d", i);
             }
         }
+        if (namedSegmentToView != null) namedSegmentToView.clear();
     }
     private void refreshStrips()
     {
         freeStrips();
-        if (stripProperties.size() != 1) throw new Error("Bruh momento only one at a time so far.");
 
-        int stripCount = stripProperties.size();
-        log(0, "Starting %d strips...", stripCount);
+        // STEP 1: Compress named segments into strips.
+        // The left side of the tuple represents the port, the right represents the length.
+        ArrayList<Pair<Integer, Integer>> stripInfo = new ArrayList<>();
+        HashMap<Integer, Integer> portToIndex = new HashMap<>();
+
+        for (int i = 0; i < config.segments.size(); i++)
+        {
+            NamedLightSegment segment = config.segments.get(i);
+            int desiredLength = segment.endIndex + 1;
+            boolean added = false;
+            for (int j = 0; j < stripInfo.size(); j++)
+            {
+                Pair<Integer, Integer> strip = stripInfo.get(j);
+                if (segment.port == strip.getFirst())
+                {
+                    // This port is already set up to be initialized.
+                    // If this placement requires a larger length, update it.
+                    if (desiredLength > strip.getSecond()) stripInfo.set(j, Pair.of(segment.port, desiredLength));
+                    added = true;
+                    break;
+                }
+            }
+            if (!added)
+            {
+                stripInfo.add(Pair.of(segment.port, desiredLength));
+                portToIndex.put(segment.port, i);
+            }
+        }
+
+        int stripCount = stripInfo.size();
+        log(0, "Initializing %d light strips for %d named segments.", stripCount, config.segments.size());
+
+        if (stripCount > 1) throw new Error("Bruh too many for now. Whatever the thingamabob.");
+
         strips = new AddressableLED[stripCount];
         buffers = new AddressableLEDBuffer[stripCount];
         for (int i = 0; i < stripCount; i++)
         {
-            LightStripProperties properties = stripProperties.get(i);
+            Pair<Integer, Integer> info = stripInfo.get(i);
+            int port = info.getFirst(), length = info.getSecond();
 
-            AddressableLED strip = new AddressableLED(properties.port);
-            strip.setLength(properties.length);
+            AddressableLED strip = new AddressableLED(port);
+            strip.setLength(length);
 
-            AddressableLEDBuffer buffer = new AddressableLEDBuffer(properties.length);
-            strip.setData(buffer);
+            AddressableLEDBuffer buffer = new AddressableLEDBuffer(length);
 
             strips[i] = strip;
             buffers[i] = buffer;
-            log(0, "Strip %d started.", i);
+
+            strip.start();
+            strip.setData(buffer);
+        }
+
+        // STEP 2: Create views by name and add them to the hash map.
+        namedSegmentToView = new HashMap<>();
+        for (int i = 0; i < config.segments.size(); i++)
+        {
+            NamedLightSegment segment = config.segments.get(i);
+            AddressableLEDBufferView view = buffers[portToIndex.get(segment.port)].createView(segment.startIndex, segment.endIndex);
+            namedSegmentToView.put(segment.name, view);
         }
     }
 
     @Override
     public void initialize()
     {
-        log(0, "Initializing scheduler command.");
+        log(0, "Initializing...");
         refreshStrips();
     }
 
     @Override
+    public void end(boolean interrupted)
+    {
+        freeStrips();
+    }
+
+    private int index;
+    @Override
     public void execute()
     {
         // TODO
-        log(0, "bruh");
+        index = 0;
+        namedSegmentToView.forEach((name, view) ->
+        {
+            Color color;
+            switch (index)
+            {
+                case 0: color = Color.kRed; break;
+                case 1: color = Color.kYellow; break;
+                case 2: color = Color.kGreen; break;
+                case 3: color = Color.kBlue; break;
+                case 4: color = Color.kPurple; break;
+                default: color = Color.kWhite; break;
+            }
+            LEDPattern.solid(color).applyTo(view);
+            index++;
+        });
+
+        for (int i = 0; i < strips.length; i++) strips[i].setData(buffers[i]);
     }
+
+    @Override
+    public boolean runsWhenDisabled() { return true; }
 
     private void log(int level, String message, Object... args)
     {
