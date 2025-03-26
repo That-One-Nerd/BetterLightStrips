@@ -34,7 +34,7 @@ public class LightSchedulerConfig
      * This allows for two different segments to do different things for a given state,
      * and it also accounts for allowing those two segments to have different states.
      */
-    public ArrayList<LightStatusRequest> states;
+    public ArrayList<LightStatusConfig> states;
 
     /**
      * The default pattern to switch to when the given state does not match any of
@@ -90,35 +90,35 @@ public class LightSchedulerConfig
     }
 
     /** Adds existing information about a given state to the scheduler. */
-    public LightSchedulerConfig withNamedState(LightStatusRequest request)
+    public LightSchedulerConfig withNamedState(LightStatusConfig request)
     {
         if (!hasNamedState(request.state, request.appliesTo)) states.add(request);
         return this;
     }
     /** Adds a collection of existing information about given states to the scheduler. */
-    public LightSchedulerConfig withNamedStates(LightStatusRequest... requests)
+    public LightSchedulerConfig withNamedStates(LightStatusConfig... requests)
     {
         for (int i = 0; i < requests.length; i++) withNamedState(requests[i]);
         return this;
     }
     /** Adds new information about a given state to the scheduler. */
-    public LightSchedulerConfig withNamedState(Object state, String appliesTo, int priority, LightPattern pattern)
+    public LightSchedulerConfig withNamedState(String appliesTo, Object state, int priority, LightPattern pattern)
     {
-        if (!hasNamedState(state, appliesTo)) states.add(new LightStatusRequest(appliesTo, priority, state, pattern));
+        if (!hasNamedState(state, appliesTo)) states.add(new LightStatusConfig(appliesTo, priority, state, pattern));
         return this;
     }
     /** Adds new information about a given state to the scheduler. Applies to ALL CURRENTLY ADDED named segments. */
     public LightSchedulerConfig withStateAll(Object state, int priority, LightPattern pattern)
     {
-        for (int i = 0; i < segments.size(); i++) withNamedState(state, segments.get(i).name, priority, pattern);
+        for (int i = 0; i < segments.size(); i++) withNamedState(segments.get(i).name, state, priority, pattern);
         return this;
     }
     /** Applies a configuration consumer to a particular state-name pair. */
-    public LightSchedulerConfig configureNamedState(Object state, String name, Consumer<LightStatusRequest> action)
+    public LightSchedulerConfig configureNamedState(Object state, String name, Consumer<LightStatusConfig> action)
     {
         for (int i = 0; i < states.size(); i++)
         {
-            LightStatusRequest request = states.get(i);
+            LightStatusConfig request = states.get(i);
             if (request.state == state && request.appliesTo.equals(name)) action.accept(request);
         }
         return this;
@@ -140,7 +140,7 @@ public class LightSchedulerConfig
     {
         for (int i = 0; i < states.size(); i++)
         {
-            LightStatusRequest request = states.get(i);
+            LightStatusConfig request = states.get(i);
             if (request.state == state && request.appliesTo.equals(name)) return true;
         }
         return false;
