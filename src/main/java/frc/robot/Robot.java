@@ -4,15 +4,14 @@
 
 package frc.robot;
 
-import javax.lang.model.util.ElementScanner14;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 import net.betterlights.LightScheduler;
 import net.betterlights.LightStatusRequest;
-import net.betterlights.patterns.SolidLightPattern;
+import net.betterlights.patterns.*;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -27,60 +26,53 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     LightScheduler.configure()
       .withLogLevel(0)
-      .withNamedLightSegment("demo1", 0, 0, 6)
-      .withNamedLightSegment("demo2", 0, 7, 19)
-      .withNamedState("demo1", DemoState.State1, 10, new SolidLightPattern(Color.kRed))
-      .withNamedState("demo1", DemoState.State2, 20, new SolidLightPattern(Color.kGreen))
-      .withNamedState("demo1", DemoState.State3, 30, new SolidLightPattern(Color.kBlue))
-      .withNamedState("demo2", DemoState.State1, 10, new SolidLightPattern(Color.kRed))
-      .withNamedState("demo2", DemoState.State2, 50, new SolidLightPattern(Color.kGreen))
-      .withNamedState("demo2", DemoState.State3, 30, new SolidLightPattern(Color.kBlue))
+      .withNamedLightSegment("full", 0, 0, 99)
+      .withStateAll("funnylights", 10,
+        new RandomLightPattern()
+          .withGamma(2.2)
+          .withRefreshEvery(5))
+      .withStateAll("lerpfrom", 20,
+        new TransitionLightPattern()
+          .withStartPattern(
+            new RandomLightPattern()
+              .withGamma(2.2)
+              .withRefreshEvery(5))
+          .withEndPattern(new SolidLightPattern(Color.kGreen))
+          .withDuration(100))
+      .withStateAll("lerpto", 20,
+        new TransitionLightPattern()
+          .withStartPattern(new SolidLightPattern(Color.kGreen))
+          .withEndPattern(
+            new RandomLightPattern()
+               .withGamma(2.2)
+              .withRefreshEvery(5))
+          .withDuration(100))
       .withUnknownBehavior(new SolidLightPattern(Color.kWhite));
-
+      
     LightScheduler.start();
-    request1 = LightScheduler.requestState(DemoState.State1);
-  }
-  private static LightStatusRequest request1;
-  private static LightStatusRequest request2;
-
-  private static enum DemoState
-  {
-    State1,
-    State2,
-    State3
+    request1 = LightScheduler.requestState("lerpto");
+    request2 = LightScheduler.requestState("lerpfrom");
   }
 
-  private int tick, index;
+  private boolean first;
+  private int tick;
+  private LightStatusRequest request1, request2;
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
 
     tick++;
-    if (tick >= 50)
+    if (tick % 150 == 0)
     {
-      tick = 0;
-      index++;
-      if (index >= 3) index = 0;
-    }
-
-    switch (index)
-    {
-      case 0: request1.state = DemoState.State1; break;
-      case 1: request1.state = DemoState.State2; break;
-      case 2: request1.state = DemoState.State3; break;
-      default: request1.state = null; break;
-    }
-
-    if (tick == 0 && index == 2)
-    {
-      if (request2 == null)
+      if (request1.isEnabled())
       {
-        request2 = LightScheduler.requestState("demo2", DemoState.State2);
+        request1.disable();
+        request2.enable();
       }
       else
       {
-        request2.dispose();
-        request2 = null;
+        request1.enable();
+        request2.disable();
       }
     }
   }

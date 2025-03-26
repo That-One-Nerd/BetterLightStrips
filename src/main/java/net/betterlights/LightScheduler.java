@@ -264,6 +264,7 @@ public class LightScheduler extends Command
                 i--;
                 continue;
             }
+            else if (!request.isEnabled()) continue;
             LightStatusConfig stateConfig = getStatusConfig(name, request.state);
             if (stateConfig == null) continue;
             else if (stateConfig.priority > priority)
