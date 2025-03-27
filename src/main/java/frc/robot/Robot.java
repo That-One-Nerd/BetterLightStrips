@@ -30,51 +30,19 @@ public class Robot extends TimedRobot {
       .withStateAll("funnylights", 10,
         new RandomLightPattern()
           .withGamma(2.2)
-          .withRefreshEvery(5))
-      .withStateAll("lerpfrom", 20,
-        new TransitionLightPattern()
-          .withStartPattern(
-            new RandomLightPattern()
-              .withGamma(2.2)
-              .withRefreshEvery(5))
-          .withEndPattern(new SolidLightPattern(Color.kGreen))
-          .withDuration(100))
-      .withStateAll("lerpto", 20,
-        new TransitionLightPattern()
-          .withStartPattern(new SolidLightPattern(Color.kGreen))
-          .withEndPattern(
-            new RandomLightPattern()
-               .withGamma(2.2)
-              .withRefreshEvery(5))
-          .withDuration(100))
+          .withGradient(Color.kRed, Color.kBlue)
+          .withRefreshEvery(15)
+          .withSmoothInterpolation())
       .withUnknownBehavior(new SolidLightPattern(Color.kWhite));
       
     LightScheduler.start();
-    request1 = LightScheduler.requestState("lerpto");
-    request2 = LightScheduler.requestState("lerpfrom");
+    request = LightScheduler.requestState("funnylights");
   }
 
-  private boolean first;
-  private int tick;
-  private LightStatusRequest request1, request2;
+  private LightStatusRequest request;
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-
-    tick++;
-    if (tick % 150 == 0)
-    {
-      if (request1.isEnabled())
-      {
-        request1.disable();
-        request2.enable();
-      }
-      else
-      {
-        request1.enable();
-        request2.disable();
-      }
-    }
   }
 
   @Override

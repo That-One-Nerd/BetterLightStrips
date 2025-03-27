@@ -3,6 +3,7 @@ package net.betterlights;
 public class LightStatusRequest
 {
     public Object state;
+    public boolean temporary;
 
     private boolean enabled;
     private boolean disposed;
@@ -10,6 +11,14 @@ public class LightStatusRequest
     LightStatusRequest(Object state)
     {
         this.state = state;
+        temporary = false;
+        enabled = true;
+        disposed = false;
+    }
+    LightStatusRequest(Object state, boolean temporary)
+    {
+        this.state = state;
+        this.temporary = temporary;
         enabled = true;
         disposed = false;
     }

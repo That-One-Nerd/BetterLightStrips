@@ -273,8 +273,26 @@ public class LightScheduler extends Command
                 priority = stateConfig.priority;
             }
         }
-
         Object prevState = chosenStates.get(name);
+
+        // Dispose of any temporary transitions that are not chosen.
+        for (int i = 0; i < requests.size(); i++)
+        {
+            LightStatusRequest request = requests.get(i);
+            if (!request.temporary) continue;
+
+            LightPattern pattern = getPatternByState(name, state);
+            if (request.state != state ||
+                pattern.isComplete())
+            {
+                if (prevState == request.state) pattern.onDisabled();
+                request.dispose();
+                requests.remove(i);
+                i--;
+                continue;
+            }
+        }
+
         if (prevState != state)
         {
             LightPattern prevPattern = getPatternByState(name, prevState),

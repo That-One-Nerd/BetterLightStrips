@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
 
 /** A pattern that transitions between two other internal light patterns, while continuing the animation of each. */
-public class TransitionLightPattern extends LightPattern
+public class FadeTransitionLightPattern extends LightPattern
 {
     private double gamma;
 
@@ -13,7 +13,7 @@ public class TransitionLightPattern extends LightPattern
 
     private int duration;
 
-    public TransitionLightPattern()
+    public FadeTransitionLightPattern()
     {
         gamma = 1.0;
         patternA = new SolidLightPattern(Color.kBlack);
@@ -27,27 +27,27 @@ public class TransitionLightPattern extends LightPattern
      * A value closer to one prefers lighter in-betweens.
      * Typically, 2.2 is used for simulation and a number close to 1 is used with actual strips.
      */
-    public TransitionLightPattern withGamma(double gamma)
+    public FadeTransitionLightPattern withGamma(double gamma)
     {
         this.gamma = gamma;
         return this;
     }
 
     /** Sets the starting pattern for this transition. */
-    public TransitionLightPattern withStartPattern(LightPattern pattern)
+    public FadeTransitionLightPattern withStartPattern(LightPattern pattern)
     {
         patternA = pattern;
         return this;
     }
     /** Sets the ending pattern for this transition. */
-    public TransitionLightPattern withEndPattern(LightPattern pattern)
+    public FadeTransitionLightPattern withEndPattern(LightPattern pattern)
     {
         patternB = pattern;
         return this;
     }
 
     /** Sets the duration of this transition in ticks. */
-    public TransitionLightPattern withDuration(int duration)
+    public FadeTransitionLightPattern withDuration(int duration)
     {
         this.duration = duration;
         return this;
@@ -69,5 +69,11 @@ public class TransitionLightPattern extends LightPattern
         // Interpolate between the two buffers.
         double time = (double)getTick() / duration;
         for (int i = 0; i < length; i++) writer.setLED(i, colorLerp(bufferA[i], bufferB[i], time, gamma));
+    }
+
+    @Override
+    public boolean isComplete()
+    {
+        return getTick() >= duration;
     }
 }

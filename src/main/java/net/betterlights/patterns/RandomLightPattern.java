@@ -17,6 +17,8 @@ public class RandomLightPattern extends LightPattern
     private int refreshEvery;
     private Random randCur, randNext;
 
+    private boolean interpolateSmooth;
+
     public RandomLightPattern()
     {
         allShades = true;
@@ -24,6 +26,7 @@ public class RandomLightPattern extends LightPattern
         refreshEvery = 1;
         randCur = new Random();
         randNext = new Random();
+        interpolateSmooth = false;
     }
 
     /**
@@ -59,12 +62,24 @@ public class RandomLightPattern extends LightPattern
         refreshEvery = ticks;
         return this;
     }
+    /** Make the pattern snap from one randomization to the next immediately. Has no effect unless withRefreshEvery() was called with a number greater than one tick. */
+    public RandomLightPattern withRoughInterpolation()
+    {
+        interpolateSmooth = false;
+        return this;
+    }
+    /** Make the pattern fade from one randomization to the next smoothly. Has no effect unless withRefreshEvery() was called with a number greater than one tick. */
+    public RandomLightPattern withSmoothInterpolation()
+    {
+        interpolateSmooth = true;
+        return this;
+    }
 
     @Override
     public void applyTo(LEDReader reader, LEDWriter writer)
     {
         int seed;
-        if (refreshEvery == 1) seed = getTick();
+        if (refreshEvery <= 1) seed = getTick();
         else seed = getTick() / refreshEvery;
         randCur.setSeed(seed);
         randNext.setSeed(seed + 1);
@@ -72,7 +87,7 @@ public class RandomLightPattern extends LightPattern
         int length = reader.getLength();
         for (int i = 0; i < length; i++)
         {
-            if (refreshEvery <= 1) writer.setLED(i, get());
+            if (refreshEvery <= 1 || !interpolateSmooth) writer.setLED(i, get());
             else
             {
                 Color curColor = get(randCur),
