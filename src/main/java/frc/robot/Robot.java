@@ -26,20 +26,26 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     LightScheduler.configure()
       .withLogLevel(0)
-      .withNamedLightSegment("full", 0, 0, 99)
-      .withStateAll("funnylights", 10,
+      .withNamedLightSegment("full", 0, 0, 19)
+      .withStateAll("randomlights", 10,
         new RandomLightPattern()
           .withGamma(2.2)
           .withGradient(Color.kRed, Color.kBlue)
           .withRefreshEvery(15)
           .withSmoothInterpolation())
+      .withStateAll("bouncer", 20,
+        new BounceLightPattern(Color.kPurple)
+          .withMoveSpeed(0.75)
+          .withLength(5)
+          .withWaveBounce()
+          .withFade())
       .withUnknownBehavior(new SolidLightPattern(Color.kWhite));
       
     LightScheduler.start();
-    request = LightScheduler.requestState("funnylights");
+    request = LightScheduler.requestState("bouncer");
   }
 
-  private LightStatusRequest request;
+  public LightStatusRequest request;
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();

@@ -9,25 +9,18 @@ import edu.wpi.first.wpilibj.util.Color;
 /** A light pattern that fills the segment with randomized colors. */
 public class RandomLightPattern extends LightPattern
 {
-    private double gamma;
+    private double gamma = 1.0;
 
     private Color shadeA, shadeB;
-    private boolean allShades;
+    private boolean allShades = true;
 
-    private int refreshEvery;
-    private Random randCur, randNext;
+    private int refreshEvery = 1;
+    private Random randCur = new Random(),
+                   randNext = new Random();
 
-    private boolean interpolateSmooth;
+    private boolean interpolateSmooth = false;
 
-    public RandomLightPattern()
-    {
-        allShades = true;
-        gamma = 1.0;
-        refreshEvery = 1;
-        randCur = new Random();
-        randNext = new Random();
-        interpolateSmooth = false;
-    }
+    public RandomLightPattern() {}
 
     /**
      * Sets the interpolating gamma value for this pattern.

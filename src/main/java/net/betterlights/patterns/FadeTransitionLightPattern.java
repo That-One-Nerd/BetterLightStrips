@@ -20,6 +20,13 @@ public class FadeTransitionLightPattern extends LightPattern
         patternB = new SolidLightPattern(Color.kBlack);
         duration = 50;
     }
+    public FadeTransitionLightPattern(LightPattern patternA, LightPattern patternB)
+    {
+        gamma = 1.0;
+        this.patternA = patternA;
+        this.patternB = patternB;
+        duration = 50;
+    }
 
     /**
      * Sets the interpolating gamma value for this pattern.

@@ -1,7 +1,5 @@
 package net.betterlights;
 
-import static edu.wpi.first.units.Units.Newton;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
