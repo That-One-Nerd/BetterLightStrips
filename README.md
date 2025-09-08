@@ -32,15 +32,22 @@ That's it. The Java package is `net.betterlights`.
 ## Usage
 
 Contents:
+- [Use-Case](#use-case)
 - [Configuration](#configuration)
     - [Strip Segments](#strip-segments)
     - [States](#states)
 - [Using States](#using-states)
 - [Custom Patterns](#custom-patterns)
 
+### Use-Case
+
+You should decide up-front how you want to use this library. The normal WPILib convention is to create a subsystem dedicated to light strips, and there's nothing wrong with using this system for that purpose. However, this system is designed to forgo the subsystem entirely. All state logic is handled by the scheduler.
+
+This library was created in the context of subsystems that have control over the lights. It's designed to be mounted upon an existing subsystem as a little bit of extra light code, rather than passing a reference to the light subsystem to all other subsystems and managing a state machine. It can be used in a dedicated subsystem, but note that most of the work done by the subsystem will likely be redundant.
+
 ### Configuration
 
-The first thing you need to do is configure your light scheduler. I recommend doing this in `Robot.robotInit()`. The `LightScheduler.configure()` method returns a configuration class. You can either save this to a variable, or run methods directly. This class follows the convention of a builder, so all methods return the original instance, for ease of use.
+The first thing you need to do is configure your light scheduler. I recommend doing this in `Robot.robotInit()` or a dedicated LED subsystem. The `LightScheduler.configure()` method returns a configuration class. You can either save this to a variable, or run methods directly. This class follows the convention of a builder, so all methods return the original instance, for ease of use.
 
 You can set the log level for the light scheduler here. The level you input represents the minimum level to print. 0 represents debug messages, 1 represent information, 2 for warnings, and 3 for errors.
 
@@ -76,7 +83,7 @@ Then we define our states. You can have global states that apply to all segments
 
 There are a few default patterns in this library. They are represented as classes and follow the "builder" structure. Let's create a few states.
 
-The name of a state can technically be any object, but strings are preferred.
+The name of a state can technically be any object, but strings, integers, or enums are preferred.
 
 ```java
 // In Robot.robotInit()...
@@ -111,7 +118,7 @@ lightConfig.withUnknownBehavior(new RandomLightPattern());
 
 That's all for configuration. You don't need to set the configuration variable, as it's passed by-reference.
 
-When you're ready to start, call `LightScheduler.start()` in your `robotInit()` method. Note that changing the configuration while the scheduler is running will result in undefined behavior (most likely it just won't do anything). If you need to change things, call `LightScheduler.end()`.
+When you're ready to start, call `LightScheduler.start()` either in your `robotInit()` method or in an LED subsystem. Note that changing the configuration while the scheduler is running will result in undefined behavior (most likely it just won't do anything). If you need to change things, call `LightScheduler.end()`.
 
 ```java
 // In Robot.robotInit()...
@@ -122,7 +129,7 @@ That's it! Check the logs if you have any warnings or errors.
 
 ### Using States
 
-To use a state, you must request it. You can request a particular state for one or more segments with `LightScheduler.requestState(String)`. The state is applied to all segments that defined a state with the name given.
+To use a state, you must request it. You can request a particular state for one or more segments with `LightScheduler.requestState()`. The state is applied to all segments that defined a state with the name given.
 
 The function returns a `LightStatusRequest` object. It represents the request itself in the scheduler. There are two supported ways to handle a request object. You can either treat it as a toggle, or treat it as a disposable object.
 
