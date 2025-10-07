@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import net.betterlights.LightScheduler;
 import net.betterlights.LightStatusRequest;
+import net.betterlights.TransitionPair;
 import net.betterlights.patterns.*;
 
 public class Robot extends TimedRobot {
@@ -39,9 +40,14 @@ public class Robot extends TimedRobot {
           .withLength(5)
           .withWaveBounce()
           .withFade())
+      .withStateAll(new TransitionPair("randomlights", "bouncer"), -1,
+        new FadeTransitionLightPattern())
+        .withStateAll(new TransitionPair("bouncer", "randomlights"), -1,
+          new FadeTransitionLightPattern())
       .withUnknownBehavior(new SolidLightPattern(Color.kWhite));
-      
+
     LightScheduler.start();
+    LightScheduler.requestState("randomlights");
     request = LightScheduler.requestState("bouncer");
   }
 
@@ -82,8 +88,13 @@ public class Robot extends TimedRobot {
     }
   }
 
+  private int tick = 0;
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    tick++;
+    if (tick % 300 < 150) request.enable();
+    else request.disable();
+  }
 
   @Override
   public void teleopExit() {}

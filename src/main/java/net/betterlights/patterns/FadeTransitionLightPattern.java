@@ -5,27 +5,14 @@ import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
 
 /** A pattern that transitions between two other internal light patterns, while continuing the animation of each. */
-public class FadeTransitionLightPattern extends LightPattern
+public class FadeTransitionLightPattern extends LightPatternTransition
 {
     private double gamma;
 
-    private LightPattern patternA, patternB;
-
-    private int duration;
-
     public FadeTransitionLightPattern()
     {
+        super();
         gamma = 1.0;
-        patternA = new SolidLightPattern(Color.kBlack);
-        patternB = new SolidLightPattern(Color.kBlack);
-        duration = 50;
-    }
-    public FadeTransitionLightPattern(LightPattern patternA, LightPattern patternB)
-    {
-        gamma = 1.0;
-        this.patternA = patternA;
-        this.patternB = patternB;
-        duration = 50;
     }
 
     /**
@@ -43,20 +30,20 @@ public class FadeTransitionLightPattern extends LightPattern
     /** Sets the starting pattern for this transition. */
     public FadeTransitionLightPattern withStartPattern(LightPattern pattern)
     {
-        patternA = pattern;
+        super.withStartPattern(pattern);
         return this;
     }
     /** Sets the ending pattern for this transition. */
     public FadeTransitionLightPattern withEndPattern(LightPattern pattern)
     {
-        patternB = pattern;
+        super.withEndPattern(pattern);
         return this;
     }
 
     /** Sets the duration of this transition in ticks. */
     public FadeTransitionLightPattern withDuration(int duration)
     {
-        this.duration = duration;
+        super.withDuration(duration);
         return this;
     }
 
@@ -66,21 +53,15 @@ public class FadeTransitionLightPattern extends LightPattern
         int length = reader.getLength();
         Color[] bufferA = new Color[length], bufferB = new Color[length];
 
-        patternA.incrementTick();
-        patternB.incrementTick();
+        startPattern.incrementTick();
+        endPattern.setCurrentTick(getTick());
         
         // Apply the patterns to the buffers. This will break if the LED values are read from the reader.
-        patternA.applyTo(reader, (i, r, g, b) -> bufferA[i] = new Color(r, g, b));
-        patternB.applyTo(reader, (i, r, g, b) -> bufferB[i] = new Color(r, g, b));
+        startPattern.applyTo(reader, (i, r, g, b) -> bufferA[i] = new Color(r, g, b));
+        endPattern.applyTo(reader, (i, r, g, b) -> bufferB[i] = new Color(r, g, b));
 
         // Interpolate between the two buffers.
         double time = (double)getTick() / duration;
         for (int i = 0; i < length; i++) writer.setLED(i, colorLerp(bufferA[i], bufferB[i], time, gamma));
-    }
-
-    @Override
-    public boolean isComplete()
-    {
-        return getTick() >= duration;
     }
 }
