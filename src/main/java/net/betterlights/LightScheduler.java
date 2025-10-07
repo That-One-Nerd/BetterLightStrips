@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import net.betterlights.patterns.LightPattern;
+import net.betterlights.patterns.LightPatternTransition;
 
 public class LightScheduler extends Command
 {
@@ -85,6 +86,11 @@ public class LightScheduler extends Command
             kInstance.mRequestState(kInstance.config.segments.get(i).name, request);
         return request;
     }
+
+    /**
+     * Returns the total amount of ticks the light scheduler has been active for.
+     */
+    public static int getAbsoluteTicks() { return kInstance.absoluteTicks; }
 
     private LightSchedulerConfig config;
 
@@ -295,9 +301,39 @@ public class LightScheduler extends Command
         {
             LightPattern prevPattern = getPatternByState(name, prevState),
                          newPattern = getPatternByState(name, state);
-            prevPattern.onDisabled();
 
-            newPattern.setStartTick(absoluteTicks);
+            // We have a state change. If there exists a transition
+            // between these two, go with that. Otherwise just set the
+            // new state.
+
+            TransitionPair transState = new TransitionPair(prevState, state);
+            LightStatusConfig transition = getStatusConfig(name, transState);
+            if (transition != null)
+            {
+                if (transition.pattern instanceof LightPatternTransition transPattern)
+                {
+                    newPattern = transPattern
+                        .withStartPattern(prevPattern)
+                        .withEndPattern(newPattern);
+                    LightStatusRequest request = requestState(transState);
+                    transition.priority = priority + 1;
+                    request.temporary = true;
+                    request.state = transState;
+                    state = transState;
+                }
+                else
+                {
+                    // Transition state found, but it does not have a LightPatternTransition.
+                    log(3, "The pattern associated with transitional state %s does not derive from LightPatternTransition, and as such cannot be used.",
+                        transition.state.toString()
+                    );
+                    prevPattern.onDisabled();
+                }
+            }
+            else prevPattern.onDisabled();
+
+            if (prevPattern instanceof LightPatternTransition prevTrans) newPattern.setStartTick(prevTrans.getContinuationTick());
+            else newPattern.setStartTick(absoluteTicks);
             newPattern.onEnabled();
 
             log(1, "Light segment \"%s\" has changed state: %s -> %s",
@@ -317,7 +353,7 @@ public class LightScheduler extends Command
         for (int j = 0; j < config.states.size(); j++)
         {
             LightStatusConfig request = config.states.get(j);
-            if (!request.appliesTo.equals(name) || curState != request.state) continue;
+            if (!request.appliesTo.equals(name) || !curState.equals(request.state)) continue;
             pattern = request.pattern;
         }
         return pattern;
@@ -373,7 +409,7 @@ public class LightScheduler extends Command
                     LightStatusConfig requestB = config.states.get(k);
                     if (!segment.name.equals(requestB.appliesTo)) continue;
 
-                    if (requestA.priority == requestB.priority)
+                    if (requestA.priority == requestB.priority && requestA.priority != -1)
                     {
                         log(2, "Named light segment \"%s\" has two states with the same priority: %s and %s (priority %d).",
                             segment.name,
@@ -390,7 +426,7 @@ public class LightScheduler extends Command
         for (int i = 0; i < config.states.size(); i++)
         {
             LightStatusConfig request = config.states.get(i);
-            if (request.appliesTo.equals(name) && request.state == state) return request;
+            if (request.appliesTo.equals(name) && request.state.equals(state)) return request;
         }
         return null;
     }
