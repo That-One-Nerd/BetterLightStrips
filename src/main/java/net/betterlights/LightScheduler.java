@@ -87,6 +87,11 @@ public class LightScheduler extends Command
         return request;
     }
 
+    /**
+     * Returns the total amount of ticks the light scheduler has been active for.
+     */
+    public static int getAbsoluteTicks() { return kInstance.absoluteTicks; }
+
     private LightSchedulerConfig config;
 
     private AddressableLED[] strips;
@@ -305,7 +310,6 @@ public class LightScheduler extends Command
             LightStatusConfig transition = getStatusConfig(name, transState);
             if (transition != null)
             {
-                System.out.println("exists");
                 if (transition.pattern instanceof LightPatternTransition transPattern)
                 {
                     newPattern = transPattern
@@ -328,7 +332,8 @@ public class LightScheduler extends Command
             }
             else prevPattern.onDisabled();
 
-            newPattern.setStartTick(absoluteTicks);
+            if (prevPattern instanceof LightPatternTransition prevTrans) newPattern.setStartTick(prevTrans.getContinuationTick());
+            else newPattern.setStartTick(absoluteTicks);
             newPattern.onEnabled();
 
             log(1, "Light segment \"%s\" has changed state: %s -> %s",

@@ -1,11 +1,16 @@
 package net.betterlights.patterns;
 
+import edu.wpi.first.wpilibj.LEDReader;
+import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
+import net.betterlights.LightScheduler;
 
 public abstract class LightPatternTransition extends LightPattern
 {
     protected LightPattern startPattern, endPattern;
     protected int duration;
+
+    protected int contTick;
 
     public LightPatternTransition()
     {
@@ -17,7 +22,9 @@ public abstract class LightPatternTransition extends LightPattern
     @Override
     public void onEnabled()
     {
+        contTick = LightScheduler.getAbsoluteTicks();
         endPattern.onEnabled();
+        endPattern.setStartTick(contTick);
     }
     @Override
     public void onDisabled()
@@ -44,6 +51,27 @@ public abstract class LightPatternTransition extends LightPattern
         this.duration = duration;
         return this;
     }
+
+    public int getContinuationTick() { return contTick; }
+
+    @Override
+    public void applyTo(LEDReader reader, LEDWriter writer)
+    {
+        int length = reader.getLength();
+        Color[] bufferA = new Color[length], bufferB = new Color[length];
+
+        int tick = LightScheduler.getAbsoluteTicks();
+        startPattern.setCurrentTick(tick);
+        endPattern.setCurrentTick(tick);
+        
+        // Apply the patterns to the buffers.
+        startPattern.applyTo(reader, (i, r, g, b) -> bufferA[i] = new Color(r, g, b));
+        endPattern.applyTo(reader, (i, r, g, b) -> bufferB[i] = new Color(r, g, b));
+
+        // Apply the new transition.
+        applyTransition(length, bufferA, bufferB, writer);
+    }
+    public abstract void applyTransition(int length, Color[] startBuffer, Color[] endBuffer, LEDWriter writer);
 
     @Override
     public boolean isComplete()

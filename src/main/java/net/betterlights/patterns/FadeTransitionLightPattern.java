@@ -1,6 +1,5 @@
 package net.betterlights.patterns;
 
-import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -48,20 +47,10 @@ public class FadeTransitionLightPattern extends LightPatternTransition
     }
 
     @Override
-    public void applyTo(LEDReader reader, LEDWriter writer)
+    public void applyTransition(int length, Color[] startBuffer, Color[] endBuffer, LEDWriter writer)
     {
-        int length = reader.getLength();
-        Color[] bufferA = new Color[length], bufferB = new Color[length];
-
-        startPattern.incrementTick();
-        endPattern.setCurrentTick(getTick());
-        
-        // Apply the patterns to the buffers. This will break if the LED values are read from the reader.
-        startPattern.applyTo(reader, (i, r, g, b) -> bufferA[i] = new Color(r, g, b));
-        endPattern.applyTo(reader, (i, r, g, b) -> bufferB[i] = new Color(r, g, b));
-
         // Interpolate between the two buffers.
         double time = (double)getTick() / duration;
-        for (int i = 0; i < length; i++) writer.setLED(i, colorLerp(bufferA[i], bufferB[i], time, gamma));
+        for (int i = 0; i < length; i++) writer.setLED(i, colorLerp(startBuffer[i], endBuffer[i], time, gamma));
     }
 }
