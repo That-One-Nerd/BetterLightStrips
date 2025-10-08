@@ -10,6 +10,8 @@ public class SwipeTransition extends LightTransition
     private int middleLength;
     private double speed;
 
+    private boolean reversed;
+
     private int length = Integer.MAX_VALUE;
 
     public SwipeTransition()
@@ -34,22 +36,45 @@ public class SwipeTransition extends LightTransition
         this.speed = speed;
         return this;
     }
+    /** Flip the direction of the wipe. */
+    public SwipeTransition reversed()
+    {
+        reversed = !reversed;
+        return this;
+    }
 
     @Override
     public void applyTransition(int length, Color[] startBuffer, Color[] endBuffer, LEDWriter writer)
     {
         this.length = length;
 
-        int newIndex = (int)(getTick() * speed) - middleLength;
-        int oldIndex = newIndex + middleLength;
-
-        for (int i = 0; i < length; i++)
+        if (reversed)
         {
-            Color outputColor;
-            if (i < newIndex) outputColor = endBuffer[i];
-            else if (i >= oldIndex) outputColor = startBuffer[i];
-            else outputColor = middleColor;
-            writer.setLED(i, outputColor);
+            int oldIndex = length - (int)(getTick() * speed);
+            int newIndex = oldIndex + middleLength;
+
+            for (int i = 0; i < length; i++)
+            {
+                Color outputColor;
+                if (i < oldIndex) outputColor = startBuffer[i];
+                else if (i >= newIndex) outputColor = endBuffer[i];
+                else outputColor = middleColor;
+                writer.setLED(i, outputColor);
+            }
+        }
+        else
+        {
+            int newIndex = (int)(getTick() * speed) - middleLength;
+            int oldIndex = newIndex + middleLength;
+
+            for (int i = 0; i < length; i++)
+            {
+                Color outputColor;
+                if (i < newIndex) outputColor = endBuffer[i];
+                else if (i >= oldIndex) outputColor = startBuffer[i];
+                else outputColor = middleColor;
+                writer.setLED(i, outputColor);
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
+import net.betterlights.patterns.wrappers.ReversedLightWrapper;
 
 /** Represents a light pattern used by the scheduler. Can be applied to any named light segment. */
 public abstract class LightPattern implements LEDPattern
@@ -30,7 +31,10 @@ public abstract class LightPattern implements LEDPattern
     }
     public abstract void applyTo(LEDReader reader, LEDWriter writer);
 
-    // #region Things to overload.
+    // Override the older reversed() LEDPattern method.
+    @Override public LightPattern reversed() { return new ReversedLightWrapper(this); }
+
+    // #region Things to override.
     public boolean useAbsoluteTicks() { return false; }
 
     public void onEnabled() { }

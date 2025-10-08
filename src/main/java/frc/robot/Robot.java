@@ -42,12 +42,13 @@ public class Robot extends TimedRobot {
           .withFade())
       .withTransitionAll("randomlights", "bouncer",
         new SwipeTransition()
-          .withIntermediate(Color.kRed, 20)
-          .withSpeed(2))
+          .withIntermediate(Color.kWhite, 5)
+          .withSpeed(1))
       .withTransitionAll("bouncer", "randomlights",
         new SwipeTransition()
           .withIntermediate(Color.kWhite, 5)
-          .withSpeed(1))
+          .withSpeed(1)
+          .reversed())
       .withUnknownBehavior(new SolidLightPattern(Color.kWhite));
 
     LightScheduler.start();
