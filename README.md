@@ -12,13 +12,13 @@ Work-in-progress. Feel free to use it.
 
 ### What this library does.
 
-- Allows you to create your own classes to represent patterns.
+- Allows you to create your own classes to represent animated patterns, or use some predefined ones.
 - Implements a state machine with a priority system.
 - Animates patterns on its own clock.
+- Dynamically transitions between patterns (you can customize these, too).
 
 ### What this library doesn't do YET.
 
-- Transitions (very barebones and terrible at the moment).
 - Support multiple LED strips (planning to add that later).
 
 ## Install
