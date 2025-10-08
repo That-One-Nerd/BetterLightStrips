@@ -27,7 +27,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     LightScheduler.configure()
       .withLogLevel(0)
-      .withNamedLightSegment("leftSeg", 0, 0, 19)
+      .withNamedLightSegment("full", 0, 0, 19)
       .withStateAll("randomlights", 10,
         new RandomLightPattern()
           .withGamma(2.2)
