@@ -17,13 +17,13 @@ public class OffsetLightWrapper extends MappedLightWrapper
     {
         // Prevent extra wrappers if not needed.
         if (offset == -this.offset) return underlying;
-        else return super.offsetBy(offset);
+        else return new OffsetLightWrapper(underlying, this.offset + offset);
     }
 
     @Override
     protected int map(int length, int index)
     {
         // Map the new index.
-        return (index + offset) % length;
+        return Math.floorMod(index + offset, length);
     }
 }

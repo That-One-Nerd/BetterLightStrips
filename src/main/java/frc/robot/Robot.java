@@ -32,8 +32,9 @@ public class Robot extends TimedRobot {
         new RandomLightPattern()
           .withGamma(2.2)
           .withShadesOfColor(Color.kPurple)
-          .withRefreshEvery(5)
-          .withSmoothInterpolation())
+          .withRefreshEvery(20)
+          .withSmoothInterpolation()
+          .scroll(0.25))
       .withStateAll("bouncer", 20,
         new BounceLightPattern(Color.kPurple)
           .withMoveSpeed(0.75)

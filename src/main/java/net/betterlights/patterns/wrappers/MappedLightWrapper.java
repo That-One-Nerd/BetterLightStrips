@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
 import net.betterlights.patterns.LightPattern;
 
-// Bars?
 /** A wrapper class that maps an index in the light strip to a new index. */
 public class MappedLightWrapper extends LightWrapper
 {

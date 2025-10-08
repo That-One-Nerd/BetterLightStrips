@@ -1,5 +1,9 @@
 package net.betterlights.patterns;
 
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Frequency;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
@@ -34,11 +38,6 @@ public abstract class LightPattern implements LEDPattern
     }
     public abstract void applyTo(LEDReader reader, LEDWriter writer);
 
-    // #region Base LEDPattern methods.
-    @Override public LightPattern offsetBy(int offset) { return new OffsetLightWrapper(this, offset); }
-    @Override public LightPattern reversed() { return new ReversedLightWrapper(this); }
-    // //#endregion
-
     // #region Things to override.
     public boolean useAbsoluteTicks() { return false; }
 
@@ -72,5 +71,37 @@ public abstract class LightPattern implements LEDPattern
             Math.pow(cGammaB, invGamma)
         );
     }
+    // #endregion
+
+    // #region Base LEDPattern methods.
+    @Override public LightPattern offsetBy(int offset) { return new OffsetLightWrapper(this, offset); }
+    @Override public LightPattern reversed() { return new ReversedLightWrapper(this); }
+
+    @Override
+    public LightPattern scrollAtRelativeSpeed(Frequency velocity)
+    {
+        // This method assumes 50 ticks per second, hence the 50.
+        // pixels   1 second
+        // ------ * -------- = answer
+        // second   50 ticks
+        return scroll(velocity.baseUnitMagnitude() / 50);
+    }
+    @Override
+    public LightPattern scrollAtAbsoluteSpeed(LinearVelocity velocity, Distance ledSpacing)
+    {
+        // I've always felt like this is a really lame method. I find it much more intuitive to scroll
+        // in pixel-based units rather than true measurements. Do the calculations on your own end if
+        // you really need to. But I'll keep supporting this method regardless.
+        
+        double metersPerSecond = velocity.in(Units.Meters.per(Units.Second));
+        double metersPerPixel = ledSpacing.in(Units.Meters);
+
+        // meters   pixels   1 second
+        // ------ * ------ * -------- = answer
+        // second   meters   50 ticks
+        return scroll(metersPerSecond / metersPerPixel / 50);
+    }
+
+    public LightPattern scroll(double pixelsPerTick) { return new ScrollLightWrapper(this, pixelsPerTick); }
     // #endregion
 }

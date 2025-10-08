@@ -14,6 +14,20 @@ public class LightWrapper extends LightPattern
         underlying = pattern;
     }
 
+    /** Count how many wrappers are being applied over the base pattern. */
+    public int getWrapperDepth()
+    {
+        // A recursive function would be even cleaner, but no need to waste resources.
+        LightPattern focus = underlying;
+        int depth = 1;
+        while (focus instanceof LightWrapper wrap)
+        {
+            depth++;
+            focus = wrap.underlying;
+        }
+        return depth;
+    }
+
     @Override public int getTick() { return underlying.getTick(); }
     @Override public void incrementTick() { underlying.incrementTick(); }
     @Override public void setStartTick(int newStart) { underlying.setStartTick(newStart); }
