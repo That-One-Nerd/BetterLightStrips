@@ -41,11 +41,11 @@ public class Robot extends TimedRobot {
           .withWaveBounce()
           .withFade())
       .withTransitionAll("randomlights", "bouncer",
-        new SwipeTransition()
+        new SwipeLightTransition()
           .withIntermediate(Color.kWhite, 5)
           .withSpeed(1))
       .withTransitionAll("bouncer", "randomlights",
-        new SwipeTransition()
+        new SwipeLightTransition()
           .withIntermediate(Color.kWhite, 5)
           .withSpeed(1)
           .reversed())

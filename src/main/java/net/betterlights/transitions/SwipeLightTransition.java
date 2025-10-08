@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
 import net.betterlights.patterns.LightPattern;
 
-public class SwipeTransition extends LightTransition
+public class SwipeLightTransition extends LightTransition
 {
     private Color middleColor;
     private int middleLength;
@@ -14,30 +14,30 @@ public class SwipeTransition extends LightTransition
 
     private int length = Integer.MAX_VALUE;
 
-    public SwipeTransition()
+    public SwipeLightTransition()
     {
         middleLength = 0;
         speed = 1;
     }
 
-    public SwipeTransition withStartPattern(LightPattern pattern) { super.withStartPattern(pattern); return this; }
-    public SwipeTransition withEndPattern(LightPattern pattern) { super.withEndPattern(pattern); return this; }
+    public SwipeLightTransition withStartPattern(LightPattern pattern) { super.withStartPattern(pattern); return this; }
+    public SwipeLightTransition withEndPattern(LightPattern pattern) { super.withEndPattern(pattern); return this; }
 
     /** Defines an intermediate color of length `middleLength` LEDs to wipe in between the two patterns. */
-    public SwipeTransition withIntermediate(Color middleColor, int middleLength)
+    public SwipeLightTransition withIntermediate(Color middleColor, int middleLength)
     {
         this.middleColor = middleColor;
         this.middleLength = middleLength;
         return this;
     }
     /** Sets the speed at which this transition takes place. A speed of 1 means it covers one LED per tick. */
-    public SwipeTransition withSpeed(double speed)
+    public SwipeLightTransition withSpeed(double speed)
     {
         this.speed = speed;
         return this;
     }
     /** Flip the direction of the wipe. */
-    public SwipeTransition reversed()
+    public SwipeLightTransition reversed()
     {
         reversed = !reversed;
         return this;
