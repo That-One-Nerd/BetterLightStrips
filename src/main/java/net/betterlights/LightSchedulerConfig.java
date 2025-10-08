@@ -6,6 +6,8 @@ import java.util.function.Consumer;
 import edu.wpi.first.wpilibj.util.Color;
 import net.betterlights.patterns.LightPattern;
 import net.betterlights.patterns.SolidLightPattern;
+import net.betterlights.transitions.LightTransition;
+import net.betterlights.transitions.TransitionPair;
 
 /**
  * The configuration class for the light scheduler. Can be used like a builder.
@@ -107,11 +109,21 @@ public class LightSchedulerConfig
         if (!hasNamedState(state, appliesTo)) states.add(new LightStatusConfig(appliesTo, priority, state, pattern));
         return this;
     }
+    /** Defines a transitional state between two other defined states. */
+    public LightSchedulerConfig withNamedTransition(String appliesTo, Object from, Object to, LightTransition pattern)
+    {
+        return withNamedState(appliesTo, new TransitionPair(from, to), -1, pattern);
+    }
     /** Adds new information about a given state to the scheduler. Applies to ALL CURRENTLY ADDED named segments. */
     public LightSchedulerConfig withStateAll(Object state, int priority, LightPattern pattern)
     {
         for (int i = 0; i < segments.size(); i++) withNamedState(segments.get(i).name, state, priority, pattern);
         return this;
+    }
+    /** Defines a transitional state between two other defined states. Applies to ALL CURRENTLY ADDED named segments. */
+    public LightSchedulerConfig withTransitionAll(Object from, Object to, LightTransition pattern)
+    {
+        return withStateAll(new TransitionPair(from, to), -1, pattern);
     }
     /** Applies a configuration consumer to a particular state-name pair. */
     public LightSchedulerConfig configureNamedState(Object state, String name, Consumer<LightStatusConfig> action)

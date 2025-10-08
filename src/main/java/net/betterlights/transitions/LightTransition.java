@@ -1,22 +1,21 @@
-package net.betterlights.patterns;
+package net.betterlights.transitions;
 
 import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
 import net.betterlights.LightScheduler;
+import net.betterlights.patterns.LightPattern;
+import net.betterlights.patterns.SolidLightPattern;
 
-public abstract class LightPatternTransition extends LightPattern
+public abstract class LightTransition extends LightPattern
 {
     protected LightPattern startPattern, endPattern;
-    protected int duration;
-
     protected int contTick;
 
-    public LightPatternTransition()
+    public LightTransition()
     {
         startPattern = new SolidLightPattern(Color.kBlack);
         endPattern = new SolidLightPattern(Color.kBlack);
-        duration = 50;
     }
 
     @Override
@@ -33,22 +32,15 @@ public abstract class LightPatternTransition extends LightPattern
     }
 
     /** Sets the starting pattern for this transition. */
-    public LightPatternTransition withStartPattern(LightPattern pattern)
+    public LightTransition withStartPattern(LightPattern pattern)
     {
         startPattern = pattern;
         return this;
     }
     /** Sets the ending pattern for this transition. */
-    public LightPatternTransition withEndPattern(LightPattern pattern)
+    public LightTransition withEndPattern(LightPattern pattern)
     {
         endPattern = pattern;
-        return this;
-    }
-
-    /** Sets the duration of this transition in ticks. */
-    public LightPatternTransition withDuration(int duration)
-    {
-        this.duration = duration;
         return this;
     }
 
@@ -73,9 +65,5 @@ public abstract class LightPatternTransition extends LightPattern
     }
     public abstract void applyTransition(int length, Color[] startBuffer, Color[] endBuffer, LEDWriter writer);
 
-    @Override
-    public boolean isComplete()
-    {
-        return getTick() >= duration;
-    }
+    public abstract boolean isComplete();
 }

@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import net.betterlights.LightScheduler;
 import net.betterlights.LightStatusRequest;
-import net.betterlights.TransitionPair;
 import net.betterlights.patterns.*;
+import net.betterlights.transitions.*;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -27,12 +27,12 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     LightScheduler.configure()
       .withLogLevel(0)
-      .withNamedLightSegment("full", 0, 0, 19)
+      .withNamedLightSegment("leftSeg", 0, 0, 19)
       .withStateAll("randomlights", 10,
         new RandomLightPattern()
           .withGamma(2.2)
-          .withGradient(Color.kRed, Color.kBlue)
-          .withRefreshEvery(15)
+          .withShadesOfColor(Color.kPurple)
+          .withRefreshEvery(5)
           .withSmoothInterpolation())
       .withStateAll("bouncer", 20,
         new BounceLightPattern(Color.kPurple)
@@ -40,15 +40,18 @@ public class Robot extends TimedRobot {
           .withLength(5)
           .withWaveBounce()
           .withFade())
-      .withStateAll(new TransitionPair("randomlights", "bouncer"), -1,
-        new FadeTransitionLightPattern())
-        .withStateAll(new TransitionPair("bouncer", "randomlights"), -1,
-          new FadeTransitionLightPattern())
+      .withTransitionAll("randomlights", "bouncer",
+        new SwipeTransition()
+          .withIntermediate(Color.kRed, 20)
+          .withSpeed(2))
+      .withTransitionAll("bouncer", "randomlights",
+        new SwipeTransition()
+          .withIntermediate(Color.kWhite, 5)
+          .withSpeed(1))
       .withUnknownBehavior(new SolidLightPattern(Color.kWhite));
 
     LightScheduler.start();
     LightScheduler.requestState("randomlights");
-    request = LightScheduler.requestState("bouncer");
   }
 
   public LightStatusRequest request;
@@ -86,18 +89,17 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-  }
 
-  private int tick = 0;
-  @Override
-  public void teleopPeriodic() {
-    tick++;
-    if (tick % 300 < 150) request.enable();
-    else request.disable();
+    request = LightScheduler.requestState("bouncer");
   }
 
   @Override
-  public void teleopExit() {}
+  public void teleopPeriodic() {}
+
+  @Override
+  public void teleopExit() {
+    request.dispose();
+  }
 
   @Override
   public void testInit() {

@@ -12,7 +12,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import net.betterlights.patterns.LightPattern;
-import net.betterlights.patterns.LightPatternTransition;
+import net.betterlights.transitions.LightTransition;
+import net.betterlights.transitions.TransitionPair;
 
 public class LightScheduler extends Command
 {
@@ -310,7 +311,7 @@ public class LightScheduler extends Command
             LightStatusConfig transition = getStatusConfig(name, transState);
             if (transition != null)
             {
-                if (transition.pattern instanceof LightPatternTransition transPattern)
+                if (transition.pattern instanceof LightTransition transPattern)
                 {
                     newPattern = transPattern
                         .withStartPattern(prevPattern)
@@ -332,7 +333,7 @@ public class LightScheduler extends Command
             }
             else prevPattern.onDisabled();
 
-            if (prevPattern instanceof LightPatternTransition prevTrans) newPattern.setStartTick(prevTrans.getContinuationTick());
+            if (prevPattern instanceof LightTransition prevTrans) newPattern.setStartTick(prevTrans.getContinuationTick());
             else newPattern.setStartTick(absoluteTicks);
             newPattern.onEnabled();
 
@@ -340,8 +341,8 @@ public class LightScheduler extends Command
                 name,
                 prevState == null ? "null" : prevState.toString(),
                 state == null ? "null" : state.toString());
+            chosenStates.put(name, state);
         }
-        chosenStates.put(name, state);
         return state;
     }
     private LightPattern mGetPattern(String name)
@@ -402,14 +403,14 @@ public class LightScheduler extends Command
             for (int j = 0; j < config.states.size(); j++)
             {
                 LightStatusConfig requestA = config.states.get(j);
-                if (!segment.name.equals(requestA.appliesTo)) continue;
+                if (!segment.name.equals(requestA.appliesTo) || requestA.pattern instanceof LightTransition) continue;
 
                 for (int k = j + 1; k < config.states.size(); k++)
                 {
                     LightStatusConfig requestB = config.states.get(k);
-                    if (!segment.name.equals(requestB.appliesTo)) continue;
+                    if (!segment.name.equals(requestB.appliesTo) || requestB.pattern instanceof LightTransition) continue;
 
-                    if (requestA.priority == requestB.priority && requestA.priority != -1)
+                    if (requestA.priority == requestB.priority)
                     {
                         log(2, "Named light segment \"%s\" has two states with the same priority: %s and %s (priority %d).",
                             segment.name,
