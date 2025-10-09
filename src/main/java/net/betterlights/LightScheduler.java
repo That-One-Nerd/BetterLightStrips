@@ -354,7 +354,7 @@ public class LightScheduler extends Command
         for (int j = 0; j < config.states.size(); j++)
         {
             LightStatusConfig request = config.states.get(j);
-            if (!request.appliesTo.equals(name) || !curState.equals(request.state)) continue;
+            if (!request.appliesTo.equals(name) || curState == null || !curState.equals(request.state)) continue;
             pattern = request.pattern;
         }
         return pattern;

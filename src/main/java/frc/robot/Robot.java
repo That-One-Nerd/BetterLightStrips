@@ -28,32 +28,23 @@ public class Robot extends TimedRobot {
     LightScheduler.configure()
       .withLogLevel(0)
       .withNamedLightSegment("full", 0, 0, 19)
-      .withStateAll("randomlights", 10,
-        new RandomLightPattern()
-          .withGamma(2.2)
-          .withShadesOfColor(Color.kPurple)
-          .withRefreshEvery(20)
-          .withSmoothInterpolation()
-          .scroll(0.25))
-      .withStateAll("bouncer", 20,
-        new BounceLightPattern(Color.kPurple)
-          .withMoveSpeed(0.75)
-          .withLength(5)
-          .withWaveBounce()
-          .withFade())
-      .withTransitionAll("randomlights", "bouncer",
-        new SwipeLightTransition()
-          .withIntermediate(Color.kWhite, 5)
-          .withSpeed(1))
-      .withTransitionAll("bouncer", "randomlights",
-        new SwipeLightTransition()
-          .withIntermediate(Color.kWhite, 5)
-          .withSpeed(1)
-          .reversed())
+      .withStateAll("patternA", 10,
+        new SolidLightPattern(Color.kRed))
+      .withStateAll("patternB", 20,
+        new SolidLightPattern(Color.kBlue))
+      .withTransitionAll("patternA", "patternB",
+        new RandomLightTransition()
+          .withColor(Color.kWhite)
+          .withPixelsPerTick(1)
+          .withSmoothFade())
+      .withTransitionAll("patternB", "patternA",
+        new RandomLightTransition()
+          .withColor(Color.kWhite)
+          .withPixelsPerTick(1))
       .withUnknownBehavior(new SolidLightPattern(Color.kWhite));
 
     LightScheduler.start();
-    LightScheduler.requestState("randomlights");
+    LightScheduler.requestState("patternA");
   }
 
   public LightStatusRequest request;
@@ -92,7 +83,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    request = LightScheduler.requestState("bouncer");
+    request = LightScheduler.requestState("patternB");
   }
 
   @Override
