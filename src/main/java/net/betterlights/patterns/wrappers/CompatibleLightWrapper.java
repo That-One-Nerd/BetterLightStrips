@@ -20,7 +20,7 @@ public class CompatibleLightWrapper extends LightPattern
     }
 
     @Override
-    public void applyTo(LEDReader reader, LEDWriter writer)
+    public void applyPattern(LEDReader reader, LEDWriter writer)
     {
         // Just call the pattern.
         pattern.applyTo(reader, writer);

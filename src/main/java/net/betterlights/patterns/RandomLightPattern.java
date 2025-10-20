@@ -69,7 +69,7 @@ public class RandomLightPattern extends LightPattern
     }
 
     @Override
-    public void applyTo(LEDReader reader, LEDWriter writer)
+    public void applyPattern(LEDReader reader, LEDWriter writer)
     {
         int seed;
         if (refreshEvery <= 1) seed = getTick();

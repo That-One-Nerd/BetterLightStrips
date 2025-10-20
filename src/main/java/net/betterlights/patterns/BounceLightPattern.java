@@ -100,7 +100,7 @@ public class BounceLightPattern extends LightPattern
     }
 
     @Override
-    public void applyTo(LEDReader reader, LEDWriter writer)
+    public void applyPattern(LEDReader reader, LEDWriter writer)
     {
         int length = reader.getLength(), tick = getTick();
 

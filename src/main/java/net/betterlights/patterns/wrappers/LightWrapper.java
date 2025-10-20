@@ -48,4 +48,5 @@ public class LightWrapper extends LightPattern
     @Override public boolean isComplete() { return super.isComplete(); }
 
     @Override public void applyTo(LEDReader reader, LEDWriter writer) { underlying.applyTo(reader, writer); }
+    @Override public void applyPattern(LEDReader reader, LEDWriter writer) { underlying.applyPattern(reader, writer); }
 }

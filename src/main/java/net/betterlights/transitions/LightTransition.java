@@ -47,7 +47,7 @@ public abstract class LightTransition extends LightPattern
     public int getContinuationTick() { return contTick; }
 
     @Override
-    public void applyTo(LEDReader reader, LEDWriter writer)
+    public void applyPattern(LEDReader reader, LEDWriter writer)
     {
         int length = reader.getLength();
         Color[] bufferA = new Color[length], bufferB = new Color[length];

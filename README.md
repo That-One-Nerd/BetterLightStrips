@@ -211,7 +211,7 @@ Here is an example pattern that sets LEDs to two different colors.
 ```java
 public class ExamplePattern extends LightPattern {
     @Override
-    public void applyTo(LEDReader reader, LEDWriter writer) {
+    public void applyPattern(LEDReader reader, LEDWriter writer) {
         int tick = getTick();
         int ledCount = reader.getLength();
 

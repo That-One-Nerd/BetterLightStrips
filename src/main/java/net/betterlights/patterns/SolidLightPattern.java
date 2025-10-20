@@ -16,7 +16,7 @@ public class SolidLightPattern extends LightPattern
     }
 
     @Override
-    public void applyTo(LEDReader reader, LEDWriter writer)
+    public void applyPattern(LEDReader reader, LEDWriter writer)
     {
         int length = reader.getLength();
         for (int i = 0; i < length; i++) writer.setLED(i, color);

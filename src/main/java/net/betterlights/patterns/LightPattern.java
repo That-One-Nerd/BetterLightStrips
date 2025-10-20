@@ -36,7 +36,7 @@ public abstract class LightPattern implements LEDPattern
     {
         curTick = newTick;
     }
-    public abstract void applyTo(LEDReader reader, LEDWriter writer);
+    public abstract void applyPattern(LEDReader reader, LEDWriter writer);
 
     // #region Things to override.
     public boolean useAbsoluteTicks() { return false; }
@@ -48,6 +48,7 @@ public abstract class LightPattern implements LEDPattern
     // #endregion
 
     // #region Helper functions.
+    public <T extends LEDReader & LEDWriter> void applyPattern(T readWriter) { applyPattern(readWriter, readWriter); };
     protected Color colorLerp(Color a, Color b, double t)
     {
         return colorLerp(a, b, t, 1.0);
@@ -103,5 +104,14 @@ public abstract class LightPattern implements LEDPattern
     }
 
     public LightPattern scroll(double pixelsPerTick) { return new ScrollLightWrapper(this, pixelsPerTick); }
+
+    @Override
+    public void applyTo(LEDReader reader, LEDWriter writer)
+    {
+        // Backwards-compatible LEDPattern system that lets
+        // animations work without the scheduler.
+        incrementTick();
+        applyPattern(reader, writer);
+    }
     // #endregion
 }
