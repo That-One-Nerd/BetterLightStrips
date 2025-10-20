@@ -298,7 +298,7 @@ public class LightScheduler extends Command
             }
         }
 
-        if (prevState != state)
+        if (!equalsNullSafe(prevState, state))
         {
             LightPattern prevPattern = getPatternByState(name, prevState),
                          newPattern = getPatternByState(name, state);
@@ -451,5 +451,12 @@ public class LightScheduler extends Command
             default: prefix = "???"; break;
         }
         System.out.printf("[LIGHTS] %s: %s\n", prefix, String.format(message, args));
+    }
+
+    private boolean equalsNullSafe(Object a, Object b)
+    {
+        if (a == null && b == null) return true;
+        else if (a == null || b == null) return false;
+        else return a.equals(b);
     }
 }
