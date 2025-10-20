@@ -316,10 +316,9 @@ public class LightScheduler extends Command
                     newPattern = transPattern
                         .withStartPattern(prevPattern)
                         .withEndPattern(newPattern);
-                    LightStatusRequest request = requestState(transState);
+                    LightStatusRequest request = new LightStatusRequest(transState, true);
+                    mRequestState(name, request);
                     transition.priority = priority + 1;
-                    request.temporary = true;
-                    request.state = transState;
                     state = transState;
                 }
                 else

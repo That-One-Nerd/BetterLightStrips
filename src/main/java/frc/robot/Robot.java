@@ -27,17 +27,20 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     LightScheduler.configure()
       .withLogLevel(0)
-      .withNamedLightSegment("full", 0, 0, 19)
-      .withStateAll("patternA", 10,
+      .withNamedLightSegment("seg1", 0,  0, 19)
+      .withNamedLightSegment("seg2", 0, 20, 34)
+      .withStateAll("patternA", 10, () ->
         new SolidLightPattern(Color.kRed))
-      .withStateAll("patternB", 20,
-        new SolidLightPattern(Color.kBlue))
-      .withTransitionAll("patternA", "patternB",
+      .withStateAll("patternB", 20, () ->
+        new BounceLightPattern(Color.kPurple)
+          .withLength(5)
+          .withWaveBounce()
+          .withFade())
+      .withTransitionAll("patternA", "patternB", () ->
         new RandomLightTransition()
           .withColor(Color.kWhite)
-          .withPixelsPerTick(1)
-          .withSmoothFade())
-      .withTransitionAll("patternB", "patternA",
+          .withPixelsPerTick(1))
+      .withTransitionAll("patternB", "patternA", () ->
         new RandomLightTransition()
           .withColor(Color.kWhite)
           .withPixelsPerTick(1))

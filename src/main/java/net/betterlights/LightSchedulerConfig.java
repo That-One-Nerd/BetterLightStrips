@@ -2,6 +2,7 @@ package net.betterlights;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.util.Color;
 import net.betterlights.patterns.LightPattern;
@@ -110,20 +111,20 @@ public class LightSchedulerConfig
         return this;
     }
     /** Defines a transitional state between two other defined states. */
-    public LightSchedulerConfig withNamedTransition(String appliesTo, Object from, Object to, LightTransition pattern)
+    public LightSchedulerConfig withNamedTransition(String appliesTo, Object from, Object to, LightTransition transition)
     {
-        return withNamedState(appliesTo, new TransitionPair(from, to), -1, pattern);
+        return withNamedState(appliesTo, new TransitionPair(from, to), -1, transition);
     }
     /** Adds new information about a given state to the scheduler. Applies to ALL CURRENTLY ADDED named segments. */
-    public LightSchedulerConfig withStateAll(Object state, int priority, LightPattern pattern)
+    public LightSchedulerConfig withStateAll(Object state, int priority, Supplier<LightPattern> pattern)
     {
-        for (int i = 0; i < segments.size(); i++) withNamedState(segments.get(i).name, state, priority, pattern);
+        for (int i = 0; i < segments.size(); i++) withNamedState(segments.get(i).name, state, priority, pattern.get());
         return this;
     }
     /** Defines a transitional state between two other defined states. Applies to ALL CURRENTLY ADDED named segments. */
-    public LightSchedulerConfig withTransitionAll(Object from, Object to, LightTransition pattern)
+    public LightSchedulerConfig withTransitionAll(Object from, Object to, Supplier<LightPattern> transition)
     {
-        return withStateAll(new TransitionPair(from, to), -1, pattern);
+        return withStateAll(new TransitionPair(from, to), -1, transition);
     }
     /** Applies a configuration consumer to a particular state-name pair. */
     public LightSchedulerConfig configureNamedState(Object state, String name, Consumer<LightStatusConfig> action)
