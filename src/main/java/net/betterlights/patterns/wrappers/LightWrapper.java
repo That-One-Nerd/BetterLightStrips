@@ -1,5 +1,6 @@
 package net.betterlights.patterns.wrappers;
 
+import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -41,6 +42,8 @@ public class LightWrapper extends LightPattern
     @Override public LightPattern scroll(double pixelsPerTick) { return underlying.scroll(pixelsPerTick); }
     @Override public LightPattern scrollAtAbsoluteSpeed(LinearVelocity velocity, Distance ledSpacing) { return underlying.scrollAtAbsoluteSpeed(velocity, ledSpacing); }
     @Override public LightPattern scrollAtRelativeSpeed(Frequency velocity) { return underlying.scrollAtRelativeSpeed(velocity); }
+    @Override public LightPattern atBrightness(double brightness) { return underlying.atBrightness(brightness); }
+    @Override public LightPattern atBrightness(Dimensionless relativeBrightness) { return underlying.atBrightness(relativeBrightness); }
 
     @Override public boolean useAbsoluteTicks() { return underlying.useAbsoluteTicks(); }
     @Override public void onEnabled() { underlying.onEnabled(); }

@@ -27,12 +27,16 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     LightScheduler.configure()
       .withLogLevel(0)
-      .withNamedLightSegment("seg1", 0,  0, 19)
-      .withNamedLightSegment("seg2", 0, 20, 39)
+      .withNamedLightSegment("seg1", 0,  0, 39)
       .withStateAll("patternA", 10, () ->
         new GradientLightPattern()
-          .withGamma(2.2)
-          .withThreeColorGradient(0, Color.kRed, Color.kGreen, Color.kBlue))
+          .withGamma(1.0)
+          .withGradient(0, new Gradient()
+            .withColorEntry(0.0, Color.kGreen)
+            .withColorEntry(0.1, Color.kWhite)
+            .withColorEntry(0.2, Color.kWhite)
+            .withColorEntry(0.3, Color.kGreen))
+          .atBrightness(0.5))
       .withStateAll("patternB", 20, () ->
         new GradientLightPattern()
           .withGamma(2.2)
@@ -62,6 +66,19 @@ public class Robot extends TimedRobot {
 
     LightScheduler.start();
     LightScheduler.requestState("patternA");
+
+    // Things I need to make wrappers for:
+    // LEDPattern pattern = null;
+    // pattern.blend(null);
+    // pattern.blink(null, null);
+    // pattern.synchronizedBlink(null);
+    // pattern.breathe(null);
+    // pattern.mapIndex(null);
+    // pattern.mask(null);
+    // pattern.overlayOn(null);
+
+    // Other debug-purpose patterns to make:
+    // - ProgressBarLightPattern
   }
 
   public LightStatusRequest request;

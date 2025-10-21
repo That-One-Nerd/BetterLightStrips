@@ -2,6 +2,9 @@ package net.betterlights;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -9,6 +12,33 @@ import edu.wpi.first.wpilibj.util.Color;
 public class Gradient
 {
     private List<Entry> entries;
+
+    public static Gradient rainbow()
+    {
+        return new Gradient()
+            .withColorEntry(0/6.0, new Color(255,   0,   0))  // red
+            .withColorEntry(1/6.0, new Color(255, 255,   0))  // yellow
+            .withColorEntry(2/6.0, new Color(  0, 255,   0))  // green
+            .withColorEntry(3/6.0, new Color(  0, 255, 255))  // cyan
+            .withColorEntry(4/6.0, new Color(  0,   0, 255))  // blue
+            .withColorEntry(5/6.0, new Color(255,   0, 255))  // magenta
+            .withColorEntry(6/6.0, new Color(255,   0,   0)); // back to red
+    }
+
+    public static Gradient linear(Collection<Color> entries)
+    {
+        Gradient result = new Gradient();
+        final int length = entries.size();
+        Iterator<Color> iterator = entries.iterator();
+        for (int i = 0; iterator.hasNext(); i++)
+        {
+            Color entry = iterator.next();
+            double pos = i / (double)(length - 1);
+            result.entries.add(new Entry(pos, entry));
+        }
+        return result;
+    }
+    public static Gradient linear(Color... entries) { return linear(Arrays.asList(entries)); }
 
     /** Creates a blank gradient. */
     public Gradient()

@@ -1,6 +1,7 @@
 package net.betterlights.patterns;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -14,6 +15,8 @@ import net.betterlights.patterns.wrappers.*;
 /** Represents a light pattern used by the scheduler. Can be applied to any named light segment. */
 public abstract class LightPattern implements LEDPattern
 {
+    public static final LightPattern kOff = new SolidLightPattern(Color.kBlack);
+
     /** From a base-layer LED pattern, construct a light pattern compatible with the scheduler. */
     public static LightPattern from(LEDPattern basePattern) { return new CompatibleLightWrapper(basePattern); }
 
@@ -57,6 +60,7 @@ public abstract class LightPattern implements LEDPattern
     @Override public LightPattern offsetBy(int offset) { return new OffsetLightWrapper(this, offset); }
     @Override public LightPattern reversed() { return new ReversedLightWrapper(this); }
 
+    public LightPattern scroll(double pixelsPerTick) { return new ScrollLightWrapper(this, pixelsPerTick); }
     @Override
     public LightPattern scrollAtRelativeSpeed(Frequency velocity)
     {
@@ -81,7 +85,8 @@ public abstract class LightPattern implements LEDPattern
         // second   meters   50 ticks
         return scroll(metersPerSecond / metersPerPixel / 50);
     }
-
-    public LightPattern scroll(double pixelsPerTick) { return new ScrollLightWrapper(this, pixelsPerTick); }
+    
+    public LightPattern atBrightness(double brightness) { return new BrightnessLightWrapper(this, brightness); }
+    @Override public LightPattern atBrightness(Dimensionless relativeBrightness) { return atBrightness(relativeBrightness.in(Units.Value)); }
     // #endregion
 }
