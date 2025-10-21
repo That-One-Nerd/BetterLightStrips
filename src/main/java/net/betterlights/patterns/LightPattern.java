@@ -101,5 +101,7 @@ public abstract class LightPattern implements LEDPattern
     public LightPattern blend(LightPattern other, double amount) { return new BlendedLightWrapper(this, other, amount); }
     public LightPattern blend(LightPattern other) { return blend(other, 0.5); }
     @Override public LightPattern blend(LEDPattern other) { return blend(from(other)); }
+    
+    @Override public LightPattern mapIndex(IndexMapper indexMapper) { return new MappedLightWrapper(this, indexMapper); }
     // #endregion
 }

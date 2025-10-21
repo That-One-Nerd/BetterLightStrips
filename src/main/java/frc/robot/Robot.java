@@ -58,11 +58,11 @@ public class Robot extends TimedRobot {
       .withTransitionAll("patternA", "patternB", () ->
         new RandomLightTransition()
           .withColor(Color.kWhite)
-          .withPixelsPerTick(1))
+          .withPixelsPerTick(2))
       .withTransitionAll("patternB", "patternA", () ->
         new RandomLightTransition()
           .withColor(Color.kWhite)
-          .withPixelsPerTick(1))
+          .withPixelsPerTick(2))
       .withUnknownBehavior(new SolidLightPattern(Color.kWhite));
 
     LightScheduler.start();
@@ -74,7 +74,6 @@ public class Robot extends TimedRobot {
     // pattern.blink(null, null);
     // pattern.synchronizedBlink(null);
     // pattern.breathe(null);
-    // pattern.mapIndex(null);
     // pattern.mask(null);
     // pattern.overlayOn(null);
     // also make OffsetLightWrapper lerp between indices.
