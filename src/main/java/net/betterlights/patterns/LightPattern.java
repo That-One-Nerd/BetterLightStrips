@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
+import net.betterlights.ColorHelper;
 import net.betterlights.patterns.wrappers.*;
 
 /** Represents a light pattern used by the scheduler. Can be applied to any named light segment. */
@@ -48,29 +49,8 @@ public abstract class LightPattern implements LEDPattern
     // #endregion
 
     // #region Helper functions.
-    protected Color colorLerp(Color a, Color b, double t)
-    {
-        return colorLerp(a, b, t, 1.0);
-    }
-    protected Color colorLerp(Color a, Color b, double t, double gamma)
-    {
-        if (t < 0) t = 0;
-        else if (t > 1) t = 1;
-
-        double invGamma = 1 / gamma;
-        double aGammaR = Math.pow(a.red, gamma),   bGammaR = Math.pow(b.red, gamma),
-               aGammaG = Math.pow(a.green, gamma), bGammaG = Math.pow(b.green, gamma),
-               aGammaB = Math.pow(a.blue, gamma),  bGammaB = Math.pow(b.blue, gamma);
-
-        double cGammaR = aGammaR + t * (bGammaR - aGammaR),
-               cGammaG = aGammaG + t * (bGammaG - aGammaG),
-               cGammaB = aGammaB + t * (bGammaB - aGammaB);
-        return new Color(
-            Math.pow(cGammaR, invGamma),
-            Math.pow(cGammaG, invGamma),
-            Math.pow(cGammaB, invGamma)
-        );
-    }
+    protected Color colorLerp(Color a, Color b, double t) { return ColorHelper.lerp(a, b, t, 1.0); }
+    protected Color colorLerp(Color a, Color b, double t, double gamma) { return ColorHelper.lerp(a, b, t, gamma); }
     // #endregion
 
     // #region Base LEDPattern methods.

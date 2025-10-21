@@ -4,6 +4,11 @@ import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
 
+/**
+ * A pattern that displays a bouncing section of color across the segment. 
+ * Has the ability to move in square or sine wave format, and the edges
+ * can be faded to form more of a moving gradient.
+ */
 public class BounceLightPattern extends LightPattern
 {
     private int radius = 2;

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
 
+/** A light pattern that is a single unchanging color. */
 public class SolidLightPattern extends LightPattern
 {
     /** The color for the lights. */

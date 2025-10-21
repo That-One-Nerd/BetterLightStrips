@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
+import net.betterlights.Gradient;
 import net.betterlights.LightScheduler;
 import net.betterlights.LightStatusRequest;
 import net.betterlights.patterns.*;
@@ -28,14 +28,28 @@ public class Robot extends TimedRobot {
     LightScheduler.configure()
       .withLogLevel(0)
       .withNamedLightSegment("seg1", 0,  0, 19)
-      .withNamedLightSegment("seg2", 0, 20, 34)
+      .withNamedLightSegment("seg2", 0, 20, 39)
       .withStateAll("patternA", 10, () ->
-        new SolidLightPattern(Color.kRed))
+        new GradientLightPattern()
+          .withGamma(2.2)
+          .withThreeColorGradient(0, Color.kRed, Color.kGreen, Color.kBlue))
       .withStateAll("patternB", 20, () ->
-        new BounceLightPattern(Color.kPurple)
-          .withLength(5)
-          .withWaveBounce()
-          .withFade())
+        new GradientLightPattern()
+          .withGamma(2.2)
+          .withSolidGradient(0.0, Color.kBlack)
+          .withGradient(0.25, new Gradient()
+            .withColorEntry(0.00, Color.kBlack)
+            .withColorEntry(0.15, Color.kRed)
+            .withColorEntry(0.30, Color.kRed)
+            .withColorEntry(0.45, Color.kBlack))
+          .withSolidGradient(0.5, Color.kBlack)
+          .withGradient(0.75, new Gradient()
+            .withColorEntry(0.55, Color.kBlack)
+            .withColorEntry(0.70, Color.kBlue)
+            .withColorEntry(0.85, Color.kBlue)
+            .withColorEntry(1.00, Color.kBlack))
+          .withEndAsBeginning()
+          .withDuration(35))
       .withTransitionAll("patternA", "patternB", () ->
         new RandomLightTransition()
           .withColor(Color.kWhite)
