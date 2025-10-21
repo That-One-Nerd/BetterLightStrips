@@ -36,7 +36,8 @@ public class Robot extends TimedRobot {
             .withColorEntry(0.1, Color.kWhite)
             .withColorEntry(0.2, Color.kWhite)
             .withColorEntry(0.3, Color.kGreen))
-          .atBrightness(0.5))
+          .atBrightness(0.5)
+          .scroll(0.5))
       .withStateAll("patternB", 20, () ->
         new GradientLightPattern()
           .withGamma(2.2)
@@ -76,6 +77,7 @@ public class Robot extends TimedRobot {
     // pattern.mapIndex(null);
     // pattern.mask(null);
     // pattern.overlayOn(null);
+    // also make OffsetLightWrapper lerp between indices.
 
     // Other debug-purpose patterns to make:
     // - ProgressBarLightPattern

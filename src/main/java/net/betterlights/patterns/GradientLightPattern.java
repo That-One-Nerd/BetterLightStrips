@@ -10,7 +10,6 @@ import net.betterlights.Gradient;
 /** Displays a gradient of multiple colors on the segment. The gradient can be animated over time using keyframes. */
 public class GradientLightPattern extends LightPattern
 {
-    private double gamma;
     private ArrayList<Entry> animation;
     private int duration;
     private boolean endAsBeginning;
@@ -54,10 +53,9 @@ public class GradientLightPattern extends LightPattern
         return this;
     }
 
-    /** Sets the gamma value for color interpolation. If you don't know a good value, leave this unset. */
-    public GradientLightPattern withGamma(double gamma)
+    @Override public GradientLightPattern withGamma(double gamma)
     {
-        this.gamma = gamma;
+        super.withGamma(gamma);
         return this;
     }
     /** Sets the duration of one cycle of animation in ticks. This will be the amount of time it takes to go through the entire list of gradients. */
@@ -129,7 +127,7 @@ public class GradientLightPattern extends LightPattern
                     Color leftCol = left.gradient.getColor(pos, gamma),
                           rightCol = right.gradient.getColor(pos, gamma);
 
-                    writer.setLED(i, colorLerp(leftCol, rightCol, t, gamma));
+                    writer.setLED(i, colorLerp(leftCol, rightCol, t));
                 }
             }
         }

@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.util.Color;
 /** A light pattern that fills the segment with randomized colors. */
 public class RandomLightPattern extends LightPattern
 {
-    private double gamma = 1.0;
-
     private Color shadeA, shadeB;
     private boolean allShades = true;
 
@@ -22,17 +20,7 @@ public class RandomLightPattern extends LightPattern
 
     public RandomLightPattern() {}
 
-    /**
-     * Sets the interpolating gamma value for this pattern.
-     * Changing this value results in changing the transition colors.
-     * A value closer to one prefers lighter in-betweens.
-     * Typically, 2.2 is used for simulation and a number close to 1 is used with actual strips.
-     */
-    public RandomLightPattern withGamma(double gamma)
-    {
-        this.gamma = gamma;
-        return this;
-    }
+    @Override public RandomLightPattern withGamma(double gamma) { super.withGamma(gamma); return this; }
     /** Make this pattern set its LEDs to a random shade between black and this color. */
     public RandomLightPattern withShadesOfColor(Color color)
     {
@@ -87,7 +75,7 @@ public class RandomLightPattern extends LightPattern
                       nextColor = get(randNext);
                 int leftover = getTick() % refreshEvery;
                 double time = (double)leftover / refreshEvery;
-                writer.setLED(i, colorLerp(curColor, nextColor, time, gamma));
+                writer.setLED(i, colorLerp(curColor, nextColor, time));
             }
         }
     }
@@ -104,6 +92,6 @@ public class RandomLightPattern extends LightPattern
             Math.pow(rand.nextDouble(), invGamma),
             Math.pow(rand.nextDouble(), invGamma)
         );
-        else return colorLerp(shadeA, shadeB, rand.nextDouble(), gamma);
+        else return colorLerp(shadeA, shadeB, rand.nextDouble());
     }
 }

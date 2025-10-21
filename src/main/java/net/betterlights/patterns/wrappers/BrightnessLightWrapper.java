@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
 import net.betterlights.patterns.LightPattern;
 
+/** A light wrapper that modifies the brightness of its underlying pattern by a specific factor. */
 public class BrightnessLightWrapper extends LightWrapper
 {
     protected final double factor;

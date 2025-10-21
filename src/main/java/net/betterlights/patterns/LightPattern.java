@@ -23,6 +23,8 @@ public abstract class LightPattern implements LEDPattern
     private int curTick;
     private int startTick;
 
+    protected double gamma = 1.0;
+
     public int getTick()
     {
         if (useAbsoluteTicks()) return curTick;
@@ -42,6 +44,13 @@ public abstract class LightPattern implements LEDPattern
     }
     public abstract void applyTo(LEDReader reader, LEDWriter writer);
 
+    /** Sets the gamma value for color interpolation. If you don't know a good value, leave this unset. */
+    public LightPattern withGamma(double gamma)
+    {
+        this.gamma = gamma;
+        return this;
+    }
+
     // #region Things to override.
     public boolean useAbsoluteTicks() { return false; }
 
@@ -52,8 +61,7 @@ public abstract class LightPattern implements LEDPattern
     // #endregion
 
     // #region Helper functions.
-    protected Color colorLerp(Color a, Color b, double t) { return ColorHelper.lerp(a, b, t, 1.0); }
-    protected Color colorLerp(Color a, Color b, double t, double gamma) { return ColorHelper.lerp(a, b, t, gamma); }
+    protected Color colorLerp(Color a, Color b, double t) { return ColorHelper.lerp(a, b, t, gamma); }
     // #endregion
 
     // #region Base LEDPattern methods.
