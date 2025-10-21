@@ -70,11 +70,9 @@ public class Robot extends TimedRobot {
 
     // Things I need to make wrappers for:
     // LEDPattern pattern = null;
-    // pattern.blend(null);
     // pattern.blink(null, null);
     // pattern.synchronizedBlink(null);
     // pattern.breathe(null);
-    // pattern.mask(null);
     // pattern.overlayOn(null);
     // also make OffsetLightWrapper lerp between indices.
 

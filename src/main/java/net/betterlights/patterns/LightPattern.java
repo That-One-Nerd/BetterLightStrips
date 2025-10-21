@@ -19,7 +19,11 @@ public abstract class LightPattern implements LEDPattern
     public static final LightPattern kOff = new SolidLightPattern(Color.kBlack);
 
     /** From a base-layer LED pattern, construct a light pattern compatible with the scheduler. */
-    public static LightPattern from(LEDPattern basePattern) { return new CompatibleLightWrapper(basePattern); }
+    public static LightPattern from(LEDPattern basePattern)
+    {
+        if (basePattern instanceof LightPattern light) return light; // No compatibiltiy wrapper needed.
+        else return new CompatibleLightWrapper(basePattern);
+    }
 
     private int curTick;
     private int startTick;
@@ -103,5 +107,8 @@ public abstract class LightPattern implements LEDPattern
     @Override public LightPattern blend(LEDPattern other) { return blend(from(other)); }
     
     @Override public LightPattern mapIndex(IndexMapper indexMapper) { return new MappedLightWrapper(this, indexMapper); }
+    
+    public LightPattern mask(LightPattern mask) { return new MaskedLightWrapper(this, mask); }
+    @Override public LightPattern mask(LEDPattern mask) { return new MaskedLightWrapper(this, from(mask)); }
     // #endregion
 }
