@@ -1,6 +1,7 @@
-package net.betterlights.patterns.wrappers;
+package net.betterlights.patterns.wrappers.implementations;
 
 import net.betterlights.patterns.LightPattern;
+import net.betterlights.patterns.wrappers.MappedLightWrapper;
 
 /** An internal wrapper that reverses the direction of the pattern. */
 public class ReversedLightWrapper extends MappedLightWrapper

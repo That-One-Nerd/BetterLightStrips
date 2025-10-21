@@ -4,6 +4,12 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public final class ColorHelper
 {
+    public static double clamp(double val, double min, double max)
+    {
+        if (val <= min) return min;
+        else if (val >= max) return max;
+        else return val;
+    }
     public static Color lerp(Color a, Color b, double t, double gamma)
     {
         if (t <= 0) return a;

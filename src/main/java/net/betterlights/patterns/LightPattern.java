@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
 import net.betterlights.ColorHelper;
 import net.betterlights.patterns.wrappers.*;
+import net.betterlights.patterns.wrappers.implementations.*;
 
 /** Represents a light pattern used by the scheduler. Can be applied to any named light segment. */
 public abstract class LightPattern implements LEDPattern
@@ -96,5 +97,9 @@ public abstract class LightPattern implements LEDPattern
     
     public LightPattern atBrightness(double brightness) { return new BrightnessLightWrapper(this, brightness); }
     @Override public LightPattern atBrightness(Dimensionless relativeBrightness) { return atBrightness(relativeBrightness.in(Units.Value)); }
+    
+    public LightPattern blend(LightPattern other, double amount) { return new BlendedLightWrapper(this, other, amount); }
+    public LightPattern blend(LightPattern other) { return blend(other, 0.5); }
+    @Override public LightPattern blend(LEDPattern other) { return blend(from(other)); }
     // #endregion
 }

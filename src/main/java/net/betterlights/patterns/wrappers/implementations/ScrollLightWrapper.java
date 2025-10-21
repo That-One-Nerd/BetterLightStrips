@@ -1,6 +1,7 @@
-package net.betterlights.patterns.wrappers;
+package net.betterlights.patterns.wrappers.implementations;
 
 import net.betterlights.patterns.LightPattern;
+import net.betterlights.patterns.wrappers.MappedLightWrapper;
 
 /** An internal wrapper that scrolls the pattern at a given rate. */
 public class ScrollLightWrapper extends MappedLightWrapper

@@ -1,6 +1,7 @@
-package net.betterlights.patterns.wrappers;
+package net.betterlights.patterns.wrappers.implementations;
 
 import net.betterlights.patterns.LightPattern;
+import net.betterlights.patterns.wrappers.MappedLightWrapper;
 
 public class OffsetLightWrapper extends MappedLightWrapper
 {
