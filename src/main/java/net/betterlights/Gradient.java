@@ -3,7 +3,6 @@ package net.betterlights;
 import java.util.List;
 import java.util.ArrayList;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj.util.Color;
 
 /** Represents a change of color over a position from 0 to 1. */
