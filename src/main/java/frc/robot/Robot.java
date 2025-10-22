@@ -27,44 +27,11 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     LightScheduler.configure()
       .withLogLevel(0)
-      .withNamedLightSegment("seg1", 0,  0, 39)
+      .withNamedLightSegment("seg1", 0,  0, 767)
       .withStateAll("patternA", 10, () ->
-        new GradientLightPattern()
-          .withGamma(1.0)
-          .withGradient(0, new Gradient()
-            .withColorEntry(0.0, Color.kGreen)
-            .withColorEntry(0.1, Color.kWhite)
-            .withColorEntry(0.2, Color.kWhite)
-            .withColorEntry(0.3, Color.kGreen))
-          .scroll(0.5)
-          .blink(10, 10)
-          .withEaseIn(5)
-          .withEaseOut(5))
+        new SolidLightPattern(Color.kBlack))
       .withStateAll("patternB", 20, () ->
-        new GradientLightPattern()
-          .withGamma(2.2)
-          .withSolidGradient(0.0, Color.kBlack)
-          .withGradient(0.25, new Gradient()
-            .withColorEntry(0.00, Color.kBlack)
-            .withColorEntry(0.15, Color.kRed)
-            .withColorEntry(0.30, Color.kRed)
-            .withColorEntry(0.45, Color.kBlack))
-          .withSolidGradient(0.5, Color.kBlack)
-          .withGradient(0.75, new Gradient()
-            .withColorEntry(0.55, Color.kBlack)
-            .withColorEntry(0.70, Color.kBlue)
-            .withColorEntry(0.85, Color.kBlue)
-            .withColorEntry(1.00, Color.kBlack))
-          .withEndAsBeginning()
-          .withDuration(35))
-      .withTransitionAll("patternA", "patternB", () ->
-        new RandomLightTransition()
-          .withColor(Color.kWhite)
-          .withPixelsPerTick(2))
-      .withTransitionAll("patternB", "patternA", () ->
-        new RandomLightTransition()
-          .withColor(Color.kWhite)
-          .withPixelsPerTick(2))
+        new BadApplePattern())
       .withUnknownBehavior(new SolidLightPattern(Color.kWhite));
 
     LightScheduler.start();
