@@ -53,6 +53,7 @@ public class RandomLightTransition extends LightTransition
     public void onEnabled()
     {
         // This transition is being reused. Let's reset it.
+        super.onEnabled();
         initialized = false;
     }
 

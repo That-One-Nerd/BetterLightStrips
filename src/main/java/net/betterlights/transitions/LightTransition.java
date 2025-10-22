@@ -19,6 +19,14 @@ public abstract class LightTransition extends LightPattern
     }
 
     @Override
+    public void setCurrentTick(int newTick)
+    {
+        super.setCurrentTick(newTick);
+        startPattern.setCurrentTick(newTick);
+        endPattern.setCurrentTick(newTick);
+    }
+
+    @Override
     public void onEnabled()
     {
         contTick = LightScheduler.getAbsoluteTicks();
@@ -51,10 +59,6 @@ public abstract class LightTransition extends LightPattern
     {
         int length = reader.getLength();
         Color[] bufferA = new Color[length], bufferB = new Color[length];
-
-        int tick = LightScheduler.getAbsoluteTicks();
-        startPattern.setCurrentTick(tick);
-        endPattern.setCurrentTick(tick);
         
         // Apply the patterns to the buffers.
         startPattern.applyTo(reader, (i, r, g, b) -> bufferA[i] = new Color(r, g, b));
