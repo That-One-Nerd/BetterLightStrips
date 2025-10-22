@@ -1,10 +1,13 @@
 package net.betterlights.patterns;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Frequency;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
@@ -110,5 +113,11 @@ public abstract class LightPattern implements LEDPattern
     
     public LightPattern mask(LightPattern mask) { return new MaskedLightWrapper(this, mask); }
     @Override public LightPattern mask(LEDPattern mask) { return new MaskedLightWrapper(this, from(mask)); }
+
+    public BlinkedLightWrapper blink(int ticksOn) { return blink(ticksOn, ticksOn); }
+    public BlinkedLightWrapper blink(int ticksOn, int ticksOff) { return new BlinkedLightWrapper(this, ticksOn, ticksOff); }
+    @Override public BlinkedLightWrapper blink(Time onTime) { return blink((int)(onTime.in(Units.Seconds) * 50)); }
+    @Override public BlinkedLightWrapper blink(Time onTime, Time offTime) { return blink((int)(onTime.in(Units.Seconds) * 50), (int)(offTime.in(Units.Seconds) * 50)); }
+    @Override public LightPattern synchronizedBlink(BooleanSupplier signal) { return new BlinkedLightWrapper(this, signal); }
     // #endregion
 }
