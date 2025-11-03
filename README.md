@@ -25,7 +25,9 @@ Work-in-progress. Feel free to use it.
 
 No vendordep yet. Maybe in the future.
 
-Copy the `src/main/java/net/betterlights` into your project. **DON'T INCLUDE THE `frc/robot` FOLDER!**
+Copy the `net/betterlights` folder into your project's `src/main/java/`, such that the result is `src/main/java/net/betterlights`.
+
+Alternatively, you can **clone via `git submodule`** to allow for easily updating the project to a new release.
 
 That's it. The Java package is `net.betterlights`.
 
