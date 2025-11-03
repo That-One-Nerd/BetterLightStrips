@@ -118,6 +118,9 @@ public abstract class LightPattern implements LEDPattern
     public BlinkedLightWrapper blink(int ticksOn, int ticksOff) { return new BlinkedLightWrapper(this, ticksOn, ticksOff); }
     @Override public BlinkedLightWrapper blink(Time onTime) { return blink((int)(onTime.in(Units.Seconds) * 50)); }
     @Override public BlinkedLightWrapper blink(Time onTime, Time offTime) { return blink((int)(onTime.in(Units.Seconds) * 50), (int)(offTime.in(Units.Seconds) * 50)); }
-    @Override public LightPattern synchronizedBlink(BooleanSupplier signal) { return new BlinkedLightWrapper(this, signal); }
+    @Override public BlinkedLightWrapper synchronizedBlink(BooleanSupplier signal) { return new BlinkedLightWrapper(this, signal); }
+    
+    public BreathingLightWrapper breathe(int period) { return new BreathingLightWrapper(this, period); }
+    @Override public BreathingLightWrapper breathe(Time period) { return breathe((int)(period.in(Units.Seconds) * 50)); }
     // #endregion
 }
