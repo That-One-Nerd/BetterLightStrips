@@ -122,5 +122,8 @@ public abstract class LightPattern implements LEDPattern
     
     public BreathingLightWrapper breathe(int period) { return new BreathingLightWrapper(this, period); }
     @Override public BreathingLightWrapper breathe(Time period) { return breathe((int)(period.in(Units.Seconds) * 50)); }
+
+    public LightPattern overlayOn(LightPattern base) { return new OverlayLightWrapper(base, this); }
+    @Override public LightPattern overlayOn(LEDPattern base) { return new OverlayLightWrapper(from(base), this); }
     // #endregion
 }

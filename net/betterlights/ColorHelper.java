@@ -4,6 +4,12 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public final class ColorHelper
 {
+    public static double absMod(double val, double mod)
+    {
+        while (val < 0) val += mod;
+        while (val >= mod) val -= mod;
+        return val;
+    }
     public static double clamp(double val, double min, double max)
     {
         if (val <= min) return min;
