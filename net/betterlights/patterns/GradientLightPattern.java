@@ -13,6 +13,7 @@ public class GradientLightPattern extends LightPattern
     private ArrayList<Entry> animation;
     private int duration;
     private boolean endAsBeginning;
+    private boolean sharp;
 
     public GradientLightPattern()
     {
@@ -72,6 +73,11 @@ public class GradientLightPattern extends LightPattern
         return this;
     }
 
+    /** Do not interpolate between gradients over time. The gradients themselves may or may not still be interpolated. */
+    public GradientLightPattern sharp() { sharp = true; return this; }
+    /** Interpolate between gradients over time. This is the default behavior. The gradients themselves may or may not be interpolated. */
+    public GradientLightPattern smooth() { sharp = false; return this; }
+
     @Override
     public void applyTo(LEDReader reader, LEDWriter writer)
     {
@@ -114,7 +120,7 @@ public class GradientLightPattern extends LightPattern
 
             // Calculate the "t" value between the two animations. Then lerp between them.
             double t;
-            if (left.time == time || right == null) t = 0;
+            if (sharp || left.time == time || right == null) t = 0;
             else t = (time - left.time) / (right.time - left.time);
 
             for (int i = 0; i < length; i++)

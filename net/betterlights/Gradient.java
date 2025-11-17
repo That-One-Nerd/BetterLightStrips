@@ -54,6 +54,25 @@ public class Gradient
         entries.add(new Entry(0, initial));
     }
 
+    /** Create a copy of a gradient. */
+    public Gradient(Gradient copy)
+    {
+        this.sharp = copy.sharp;
+        entries = new ArrayList<Entry>(copy.entries.size());
+        for (int i = 0; i < copy.entries.size(); i++)
+        {
+            Entry copiedEntry = copy.entries.get(i);
+            entries.add(new Entry(
+                copiedEntry.position,
+                new Color(
+                    copiedEntry.color.red,
+                    copiedEntry.color.green,
+                    copiedEntry.color.blue)
+                )
+            );
+        }
+    }
+
     /** Adds a color marker to the gradient at the given position between 0 and 1. */
     public Gradient withColorEntry(double position, Color color)
     {
