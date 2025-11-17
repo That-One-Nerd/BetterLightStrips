@@ -300,6 +300,7 @@ public class LightScheduler extends Command
 
         if (!equalsNullSafe(prevState, state))
         {
+            Object trueState = state;
             LightPattern prevPattern = getPatternByState(name, prevState),
                          newPattern = getPatternByState(name, state);
 
@@ -336,10 +337,15 @@ public class LightScheduler extends Command
             else newPattern.setStartTick(absoluteTicks);
             newPattern.onEnabled();
 
-            log(1, "Light segment \"%s\" has changed state: %s -> %s",
-                name,
-                prevState == null ? "null" : prevState.toString(),
-                state == null ? "null" : state.toString());
+            Object displayPrevState = prevState, displayNewState = state;
+            if (config.mergeTransitionLogs && displayNewState instanceof TransitionPair) displayNewState = trueState;
+            if (!config.mergeTransitionLogs || !(displayPrevState instanceof TransitionPair))
+            {
+                log(1, "Light segment \"%s\" has changed state: %s -> %s",
+                    name,
+                    displayPrevState == null ? "null" : displayPrevState.toString(),
+                    displayNewState == null ? "null" : displayNewState.toString());
+            }
             chosenStates.put(name, state);
         }
         return state;

@@ -27,6 +27,13 @@ public class LightSchedulerConfig
     public int logLevel;
 
     /**
+     * Combines pattern change state logs when a transition is involved down to a single message.
+     * If set to false, the default two log messages will be sent (for the start and end of the
+     * transition).
+     */
+    public boolean mergeTransitionLogs;
+
+    /**
      * A collection of named light segments to use in the scheduler. Each named segment can
      * have its own state, or have its own pattern according to a global state.
      */
@@ -60,6 +67,16 @@ public class LightSchedulerConfig
     public LightSchedulerConfig withLogLevel(int logLevel)
     {
         this.logLevel = logLevel;
+        return this;
+    }
+    /**
+     * Combines pattern change state logs when a transition is involved down to a single message.
+     * If set to false, the default two log messages will be sent (for the start and end of the
+     * transition).
+     */
+    public LightSchedulerConfig withMergedTransitionLogs()
+    {
+        mergeTransitionLogs = true;
         return this;
     }
 
