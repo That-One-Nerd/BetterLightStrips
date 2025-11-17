@@ -25,11 +25,11 @@ Work-in-progress. Feel free to use it.
 
 No vendordep yet. Maybe in the future.
 
-Copy the `net/betterlights` folder into your project's `src/main/java/`, such that the result is `src/main/java/net/betterlights`.
+Copy the `betterlights` folder into your project's `src/main/java/`, such that the result is `src/main/java/betterlights`.
 
 Alternatively, you can **clone via `git submodule`** to allow for easily updating the project to a new release.
 
-That's it. The Java package is `net.betterlights`.
+That's it. The Java package is `betterlights`.
 
 ## Usage
 
