@@ -5,11 +5,12 @@ import java.util.Random;
 import edu.wpi.first.wpilibj.LEDReader;
 import edu.wpi.first.wpilibj.LEDWriter;
 import edu.wpi.first.wpilibj.util.Color;
+import net.betterlights.Gradient;
 
 /** A light pattern that fills the segment with randomized colors. */
 public class RandomLightPattern extends LightPattern
 {
-    private Color shadeA, shadeB;
+    private Gradient gradient;
     private boolean allShades = true;
 
     private int refreshEvery = 1;
@@ -25,16 +26,25 @@ public class RandomLightPattern extends LightPattern
     public RandomLightPattern withShadesOfColor(Color color)
     {
         allShades = false;
-        shadeA = Color.kBlack;
-        shadeB = color;
+        gradient = new Gradient()
+            .withColorEntry(0, Color.kBlack)
+            .withColorEntry(1, color);
         return this;
     }
     /** Make this pattern set its LEDs to a random gradient between these two colors. */
     public RandomLightPattern withGradient(Color colorA, Color colorB)
     {
         allShades = false;
-        shadeA = colorA;
-        shadeB = colorB;
+        gradient = new Gradient()
+            .withColorEntry(0, colorA)
+            .withColorEntry(1, colorB);
+        return this;
+    }
+    /** Make this pattern set its LEDs to a random value in this gradient. */
+    public RandomLightPattern withGradient(Gradient gradient)
+    {
+        allShades = false;
+        this.gradient = gradient;
         return this;
     }
     /** Make the pattern re-randomize the LEDs every given amount of ticks. */
@@ -92,6 +102,6 @@ public class RandomLightPattern extends LightPattern
             Math.pow(rand.nextDouble(), invGamma),
             Math.pow(rand.nextDouble(), invGamma)
         );
-        else return colorLerp(shadeA, shadeB, rand.nextDouble());
+        else return gradient.getColor(rand.nextDouble(), gamma);
     }
 }
