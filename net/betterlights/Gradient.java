@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.util.Color;
 public class Gradient
 {
     private List<Entry> entries;
+    private boolean sharp;
 
     public static Gradient rainbow()
     {
@@ -60,6 +61,11 @@ public class Gradient
         return this;
     }
 
+    /** Do not ease between colors in the gradient. */
+    public Gradient sharp() { sharp = true; return this; }
+    /** Interpolate between colors in the gradient. The default behavior. */
+    public Gradient smooth() { sharp = false; return this; }
+
     /** Returns the color at the given position between 0 and 1. Will most likely be interpolated. */
     public Color getColor(double position, double gamma)
     {
@@ -80,6 +86,7 @@ public class Gradient
         if (left == null && right == null) return Color.kBlack; // Empty gradient!
         else if (left == null) return right.color;
         else if (right == null) return left.color;
+        else if (sharp) return left.color; // Don't interpolate if sharp is true.
         else
         {
             // Find the "t" value between left and right. Then lerp it.

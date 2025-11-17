@@ -44,13 +44,13 @@ public class RandomLightPattern extends LightPattern
         return this;
     }
     /** Make the pattern snap from one randomization to the next immediately. Has no effect unless withRefreshEvery() was called with a number greater than one tick. */
-    public RandomLightPattern withRoughInterpolation()
+    public RandomLightPattern sharp()
     {
         interpolateSmooth = false;
         return this;
     }
     /** Make the pattern fade from one randomization to the next smoothly. Has no effect unless withRefreshEvery() was called with a number greater than one tick. */
-    public RandomLightPattern withSmoothInterpolation()
+    public RandomLightPattern smooth()
     {
         interpolateSmooth = true;
         return this;

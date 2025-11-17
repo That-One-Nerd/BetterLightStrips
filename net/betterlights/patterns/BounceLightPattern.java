@@ -61,18 +61,18 @@ public class BounceLightPattern extends LightPattern
     }
     /**
      * Makes the pattern fade between the foreground color and the background color
-     * based on an LED's distance from the center of the wave. See also `withSharp()`.
+     * based on an LED's distance from the center of the wave. See also `sharp()`.
      */
-    public BounceLightPattern withFade()
+    public BounceLightPattern smooth()
     {
         fade = true;
         return this;
     }
     /**
      * Makes the pattern have no fading between the foreground color and the background
-     * color. The opposite of `withFade()`.
+     * color. The opposite of `smooth()`.
      */
-    public BounceLightPattern withSharp()
+    public BounceLightPattern sharp()
     {
         fade = false;
         return this;

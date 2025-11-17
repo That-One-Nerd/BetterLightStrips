@@ -11,12 +11,18 @@ import net.betterlights.patterns.wrappers.LightWrapper;
 public class ScrollLightWrapper extends LightWrapper
 {
     private final double speed;
+    private boolean sharp;
 
     public ScrollLightWrapper(LightPattern pattern, double speed)
     {
         super(pattern);
         this.speed = speed;
     }
+
+    /** Do not interpolate between pixels in the scroll animation. */
+    public ScrollLightWrapper sharp() { sharp = true; return this; }
+    /** Interpolate between pixels in the scroll animation. The default behavior. */
+    public ScrollLightWrapper smooth() { sharp = false; return this; }
 
     @Override
     public void applyTo(LEDReader reader, LEDWriter writer)
@@ -35,7 +41,7 @@ public class ScrollLightWrapper extends LightWrapper
                 maxIndex = (int)ColorHelper.absMod(Math.ceil(i + offset), length);
             double t = ColorHelper.absMod(offset, 1);
 
-            if (minIndex == maxIndex) writer.setLED(i, buffer[minIndex]); // Easy, they're the same!
+            if (sharp || minIndex == maxIndex) writer.setLED(i, buffer[minIndex]); // Easy, they're the same!
             else writer.setLED(i, colorLerp(buffer[minIndex], buffer[maxIndex], t)); // Whelp, let's interpolate.
         }
     }

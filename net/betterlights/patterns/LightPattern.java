@@ -76,9 +76,8 @@ public abstract class LightPattern implements LEDPattern
     @Override public LightPattern offsetBy(int offset) { return new OffsetLightWrapper(this, offset); }
     @Override public LightPattern reversed() { return new ReversedLightWrapper(this); }
 
-    public LightPattern scroll(double pixelsPerTick) { return new ScrollLightWrapper(this, pixelsPerTick); }
-    @Override
-    public LightPattern scrollAtRelativeSpeed(Frequency velocity)
+    public ScrollLightWrapper scroll(double pixelsPerTick) { return new ScrollLightWrapper(this, pixelsPerTick); }
+    @Override public ScrollLightWrapper scrollAtRelativeSpeed(Frequency velocity)
     {
         // This method assumes 50 ticks per second, hence the 50.
         // pixels   1 second
@@ -86,8 +85,7 @@ public abstract class LightPattern implements LEDPattern
         // second   50 ticks
         return scroll(velocity.baseUnitMagnitude() / 50);
     }
-    @Override
-    public LightPattern scrollAtAbsoluteSpeed(LinearVelocity velocity, Distance ledSpacing)
+    @Override public ScrollLightWrapper scrollAtAbsoluteSpeed(LinearVelocity velocity, Distance ledSpacing)
     {
         // I've always felt like this is a really lame method. I find it much more intuitive to scroll
         // in pixel-based units rather than true measurements. Do the calculations on your own end if
